@@ -180,6 +180,7 @@ Route::get('/get-hotel-distance', 'HotelController@getHotelDistance');
 Route::get('/index' ,  [ZiratController::class , 'index'])->name('ziarat.index');
 Route::get('/create' ,  [ZiratController::class , 'create'])->name('ziarat.create');
 // Route::get('/edit' ,  [ZiratController::class , 'edit'])->name('ziarat.edit');
+
 Route::Post('/create' ,  [ZiratController::class , 'store'])->name('ziarat.store');
 Route::get('/ziarat-price/{name}', [ZiratController::class, 'getZiaratPrice'])->name('ziarat.price');
 
