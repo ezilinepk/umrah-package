@@ -307,9 +307,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-2" style="margin-left:-130px;">
-                                    <input type="text" class="form-control" id="additionalInputField" placeholder="Enter  Name">
-                                </div>
+
 
                             </div>
 
@@ -410,6 +408,10 @@
                                     </div>
                                 </div> --}}
 
+                                <div class="col-md-2" style="margin-top: 30px" >
+                                    <input type="text" class="form-control" id="additionalInputField" placeholder="Enter  Name">
+                                </div>
+
                                 <div class="col-md-4" id="estimateTotalPriceContainer" style="display: none;">
                                     <label for="estimateTotalPrice" style="color: black">Estimated Total Price (PKR)</label>
                                     <input type="text" id="estimateTotalPrice" class="form-control estimate-total-price" value="0" readonly>
@@ -493,8 +495,8 @@
         var hotelName = $('#location').val();
         var dateRange = $('#dateRange').val();
         var roomType = $('#roomDropdown').val();
-        var visaPrice = parseFloat($('#visaPrice').val()) || 0;
-        var visaPriceWithTransport = parseFloat($('#visaPriceWithTransport').val()) || 0;
+        var visaPrice = parseFloat($('#visaPriceInputCheckbox').val()) || 0;
+        var visaPriceWithTransport = parseFloat($('#visaPriceWithTransportInputCheckbox').val()) || 0;
         var ziaratPrice = parseFloat($('#totalPrice').val()) || 0;
 
         if (hotelName && dateRange && roomType) {
@@ -650,7 +652,7 @@ $('#roomDropdown').change(function() {
             </div>
 
             <div class="form-group col-md-3 col-sm-6 col-12 d-flex align-items-end">
-                <div class="w-100">
+                <div class="w-100" style = "margin-bottom: 8px;">
                     <label for="roomDropdown-${rowCount + 1}" style="color: black">Room Type</label>
                     <div class="input-group">
                         <select class="form-control roomDropdown" id="roomDropdown-${uniqueSuffix}">
@@ -860,53 +862,57 @@ $(document).on('click', '.book-now', function() {
         });
 
         $('#visaPriceCheckbox').change(function() {
-        if ($(this).is(':checked')) {
-            $.ajax({
-                url: '{{ route('getVisaPrice') }}',
-                type: 'GET',
-                data: {
-                    visaType: 'Ummrah',
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $('#visaPriceInputCheckbox').val(response.visaPrice);
-                        $('#visa-price-with-transport-container-checkbox').hide();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
-                }
-            });
-        } else {
-            $('#visaPriceInputCheckbox').val('');
-        }
-    });
+    if ($(this).is(':checked')) {
+        $.ajax({
+            url: '{{ route('getVisaPrice') }}',
+            type: 'GET',
+            data: {
+                visaType: 'Ummrah',
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Visa Price:', response.visaPrice);  // Log the visa price
 
-    $('#visaPriceWithTransportCheckbox').change(function() {
-        if ($(this).is(':checked')) {
-            $.ajax({
-                url: '{{ route('getVisaPrice') }}',
-                type: 'GET',
-                data: {
-                    visaType: 'Ummrah',
-                    transportIncluded: true,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $('#visaPriceWithTransportInputCheckbox').val(response.visaPriceWithTransport);
-                        $('#visa-price-container-checkbox').hide();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
+                    $('#visaPriceInputCheckbox').val(response.visaPrice);
+                    $('#visa-price-with-transport-container-checkbox').hide();
                 }
-            });
-        } else {
-            $('#visaPriceWithTransportInputCheckbox').val('');
-        }
-    });
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+            }
+        });
+    } else {
+        $('#visaPriceInputCheckbox').val('');
+    }
+});
+
+$('#visaPriceWithTransportCheckbox').change(function() {
+    if ($(this).is(':checked')) {
+        $.ajax({
+            url: '{{ route('getVisaPrice') }}',
+            type: 'GET',
+            data: {
+                visaType: 'Ummrah',
+                transportIncluded: true,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Visa Price with Transport:', response.visaPriceWithTransport);  // Log the visa price with transport
+
+                    $('#visaPriceWithTransportInputCheckbox').val(response.visaPriceWithTransport);
+                    $('#visa-price-container-checkbox').hide();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+            }
+        });
+    } else {
+        $('#visaPriceWithTransportInputCheckbox').val('');
+    }
+});
 
 
 
