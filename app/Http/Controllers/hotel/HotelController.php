@@ -284,9 +284,8 @@ class HotelController extends Controller
 
 public function getRoomPrices(Request $request)
 {
-    // dd($request->all());
-    $location = $request->input('hotel_name');
 
+    $location = $request->input('hotel_name');
     $dateRange = $request->input('dateRange');
     $roomType = $request->input('roomType');
     $visaPrice = (float) $request->input('visaPrice', 0);
@@ -302,10 +301,12 @@ public function getRoomPrices(Request $request)
 
     $startDate = \Carbon\Carbon::parse($startDate);
     $endDate = \Carbon\Carbon::parse($endDate);
+
+
     $numDays = $startDate->diffInDays($endDate) + 1;
 
+
     $hotels = Hotel::where('id', $location)->get();
-    // dd($hotels);
 
     $roomPrices = [];
     $totalPrices = [];
@@ -318,20 +319,18 @@ public function getRoomPrices(Request $request)
             $dayOfWeek = strtolower($date->format('l'));
             $priceField = "{$dayOfWeek}_price_" . strtolower($roomType);
 
-
             if ($hotel->$priceField) {
                 $roomPrice += $hotel->$priceField;
-            } else {
             }
         }
 
-
+        // Calculate prices
         $roomPrices[$hotel->id] = 'Room price for ' . $numDays . ' days: $' . number_format($roomPrice, 2);
         $dailyPrices[$hotel->id] = number_format($roomPrice / $numDays, 2);
         $totalPrices[$hotel->id] = number_format($roomPrice + $visaPrice + $visaPriceWithTransport, 2);
-        // dd($totalPrices);
     }
 
+    // Return the response with additional 'numDays' field
     return response()->json([
         'success' => true,
         'hotel' => $hotels->first(),
@@ -340,12 +339,12 @@ public function getRoomPrices(Request $request)
         'visaPrice' => $visaPrice,
         'visaPriceWithTransport' => $visaPriceWithTransport,
         'totalPrices' => $totalPrices,
-       'picture' => asset('images/' . $hotel->hotel_picture),
-       'dateRange' => $dateRange,
-
-
+        'picture' => asset('images/' . $hotels->first()->hotel_picture),
+        'dateRange' => $dateRange,
+        'numDays' => $numDays,  // Include the number of days in the response
     ]);
 }
+
 
 
 
