@@ -290,9 +290,43 @@
 
                 <div class="container">
                     <div class="search-form">
-                        <form id="search-form">
+                        <form id="search-form" action="{{ route('storeFormData') }}">
+
+                            <div class="form-row mb-2" style=" margin-left:10px;">
+                                <div class="col-md-6">
+                                    <div class="d-flex">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="checkbox" value="visaPrice" id="visaPriceCheckbox">
+                                            <label class="form-check-label" for="visaPriceCheckbox" style="color: black">Only Visa</label>
+                                        </div>
+                                        <div class="form-check" style="margin-left: 20px;">
+                                            <input class="form-check-input" type="checkbox" value="visaPriceWithTransport" id="visaPriceWithTransportCheckbox">
+                                            <label class="form-check-label" for="visaPriceWithTransportCheckbox" style="color: black">Visa Price with Transport</label>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2" style="margin-left:-130px;">
+                                    <input type="text" class="form-control" id="additionalInputField" placeholder="Enter  Name">
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-row mb-3">
+                                <div class="col-md-6">
+                                    <div id="visa-price-container-checkbox" class="mt-2">
+                                        <input type="hidden" id="visaPriceInputCheckbox" class="form-control" value="0">
+                                    </div>
+                                    <div id="visa-price-with-transport-container-checkbox" class="mt-2">
+                                        <input type="hidden" id="visaPriceWithTransportInputCheckbox" class="form-control" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-row">
-                                <div class="form-group col-md-3 col-sm-6 col-12">
+                                <div class="form-group col-md-2 col-sm-6 col-12">
                                     <label for="ziaratName" style="color: black">Location</label>
                                     <select class="form-control" id="ziaratName">
                                         <option value="">Select Location</option>
@@ -301,62 +335,57 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3 col-sm-6 col-12">
+                                <div class="form-group col-md-2 col-sm-6 col-12">
                                     <label for="location" style="color: black">Hotel Name</label>
                                     <select class="form-control" id="location">
                                         <option value="">Select Hotel</option>
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3 col-sm-6 col-12">
+                                <div class="form-group col-md-2 col-sm-6 col-12">
                                     <label for="dateRange" style="color: black">Check-in / Check-out</label>
                                     <input type="text" class="form-control" id="dateRange">
                                 </div>
 
-                                <div class="form-group col-md-3 col-sm-6 col-12 d-flex align-items-end">
-                                    <div class="w-100">
-                                        <label for="roomDropdown" style="color: black">Room Type</label>
-                                        <div class="input-group">
-                                            <select class="form-control" id="roomDropdown">
-                                                <option value="">Select room type and quantity</option>
-                                                <option value="Sharing">Sharing</option>
-                                                <option value="Double">Double</option>
-                                                <option value="Triple">Triple</option>
-                                                <option value="Quint">Quint</option>
-                                            </select>
-                                            <div class="input-group-append">
-                                                <a class="btn btn-sm btn-primary" id="addRowButton">
-                                                    <i class="fa fa-plus"></i>
-                                                </a>
-                                            </div>
+                                <div class="form-group col-md-3 col-sm-6 col-12">
+                                    <label for="roomDropdown" style="color: black">Room Type</label>
+                                    <div class="input-group">
+                                        <select class="form-control" id="roomDropdown">
+                                            <option value="">Select room type and quantity</option>
+                                            <option value="Sharing">Sharing</option>
+                                            <option value="Double">Double</option>
+                                            <option value="Triple">Triple</option>
+                                            <option value="Quint">Quint</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-sm btn-danger" id="subtractRowButton" type="button">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <div class="input-group-text" id="counter">0</div>
+                                            <button class="btn btn-sm btn-primary" id="addcounter" type="button">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="form-group col-md-1 col-sm-6 col-12">
+                                    <label for="nights" style="color: black">Nights</label>
+                                    <input type="text" class="form-control" id="nights" readonly>
+                                </div>
+
+                                <div class="form-group col-md-2 col-sm-6 col-12 d-flex align-items-end" style="    margin-bottom: 34px;margin-left: 0px;height: 66px;">
+                                    <button class="btn btn-sm btn-primary" id="addRowButton">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
+
 
                             <div id="additionalRowsContainer"></div>
 
-                            <div class="form-row" style="margin-left: 4px; ">
-                                <div class="col-md-3">
-                                    <label for="visa" class="form-label" style="color: black">Visa</label>
-                                    <div class="input-group">
-                                        <select class="form-control" id="visaDropdown">
-                                            <option value="">Select Visa</option>
-                                            <option value="visaPrice">Only Visa</option>
-                                            <option value="visaPriceWithTransport">Visa Price with Transport</option>
-                                        </select>
-                                    </div>
-                                    <div id="visa-price-container" class="mt-2" style="display: none;">
-                                        <label for="visaPrice" class="form-label">Visa Price</label>
-                                        <input type="hidden" id="visaPrice" class="form-control" value="0">
-                                    </div>
-                                    <div id="visa-price-with-transport-container" class="mt-2" style="display: none;">
-                                        <label for="visaPriceWithTransport" class="form-label">Visa Price with Transport</label>
-                                        <input type="hidden" id="visaPriceWithTransport" class="form-control" value="0">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3" >
+                            <div class="form-row" style="margin-left: 4px;">
+                                {{-- <div class="col-md-3">
                                     <label for="ziarat" class="form-label" style="color: black">Ziarat</label>
                                     <div class="input-group">
                                         <select class="form-control" id="ziaratDropdown">
@@ -379,17 +408,24 @@
                                         <label for="totalPrice" class="form-label">Total Price</label>
                                         <input type="hidden" id="totalPrice" class="form-control" value="0" readonly>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-md-4" id="estimateTotalPriceContainer" style="display: none;">
                                     <label for="estimateTotalPrice" style="color: black">Estimated Total Price (PKR)</label>
                                     <input type="text" id="estimateTotalPrice" class="form-control estimate-total-price" value="0" readonly>
                                 </div>
+
+                                <div class="form-group col-md-4" style="    margin-top: 31px; margin-left: -40px;" >
+                                    <button type="button" id="calculateubl" class="btn btn-success">Calculate UBC</button>
+                                </div>
                             </div>
+
+
 
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -452,7 +488,6 @@
         });
 
 
-
         $(document).ready(function() {
     function fetchRoomPrices(hotelId) {
         var hotelName = $('#location').val();
@@ -484,6 +519,9 @@
                         var visaPrice = response.visaPrice || 0;
                         var visaPriceWithTransport = response.visaPriceWithTransport || 0;
                         var dateRange = response.dateRange;
+                        var numDays = response.numDays;
+
+                        $('#nights').val(numDays);
 
                         updateHotelDetails(hotelId, roomPrices, totalPrices, dailyPrices,
                             visaPrice, visaPriceWithTransport, ziaratPrice , dateRange);
@@ -520,7 +558,7 @@
             var newTotal = currentTotal + grandTotalPrice;
             $('#estimateTotalPrice').val(newTotal.toFixed(2));
 
-            $('#estimateTotalPriceContainer').show();
+            $('#estimateTotalPriceContainer').hide();
 
             var hotelDetailsHtml = `
                 <div class="card booking-card">
@@ -567,247 +605,133 @@ function updateEstimatedTotalPrice(totalPrices) {
     }
 
     $('#estimateTotalPrice').val(currentTotal.toFixed(2));
-    $('#estimateTotalPriceContainer').show();
+    $('#estimateTotalPriceContainer').hide();
 }
 
+$('#calculateubl').on('click', function() {
+        $('#estimateTotalPriceContainer').show();
+});
 
 
-            function initializeDateRangePicker(selector) {
-                $(selector).daterangepicker({
-                    autoUpdateInput: false,
-                    locale: {
-                        cancelLabel: 'Clear',
-                        format: 'YYYY-MM-DD'
-                    }
-                }).on('apply.daterangepicker', function(ev, picker) {
-                    let selectedDateRange = picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate
-                        .format('YYYY-MM-DD');
-                    let overlap = getOverlappingRange(selectedDateRange, selector);
-
-                    if (overlap) {
-                        let newStartDate = moment(overlap.endDate).add(1, 'days').format('YYYY-MM-DD');
-                        let newRange = newStartDate + ' to ' + picker.endDate.format('YYYY-MM-DD');
-
-                        if (newStartDate <= picker.endDate.format('YYYY-MM-DD')) {
-                            alert(
-                                `The selected date range overlaps with an existing one. Only the non-overlapping dates (${newRange}) will be added.`);
-                            $(this).val(newRange);
-                        } else {
-                            alert(
-                                "The selected date range has already been chosen. Please select a different date range.");
-                            $(this).val('');
-                        }
-                    } else {
-                        $(this).val(selectedDateRange);
-                    }
-
-                    fetchRoomPrices();
-                }).on('cancel.daterangepicker', function() {
-                    $(this).val('');
-                    fetchRoomPrices();
-                });
-            }
-
-            function getOverlappingRange(selectedDateRange, currentSelector) {
-                let [selectedStart, selectedEnd] = selectedDateRange.split(' to ').map(date => moment(date));
-                let overlappingRange = null;
-
-                let mainDateRange = $('#dateRange').val();
-                if (mainDateRange && currentSelector !== '#dateRange') {
-                    let [mainStart, mainEnd] = mainDateRange.split(' to ').map(date => moment(date));
-                    if (selectedStart.isSameOrBefore(mainEnd) && selectedEnd.isSameOrAfter(mainStart)) {
-                        overlappingRange = {
-                            startDate: mainStart,
-                            endDate: mainEnd
-                        };
-                        return overlappingRange;
-                    }
-                }
-
-                $('.dateRange').each(function() {
-                    if (this.id !== currentSelector.replace('#', '')) {
-                        let [rangeStart, rangeEnd] = $(this).val().split(' to ').map(date => moment(date));
-                        if (selectedStart.isSameOrBefore(rangeEnd) && selectedEnd.isSameOrAfter(
-                            rangeStart)) {
-                            overlappingRange = {
-                                startDate: rangeStart,
-                                endDate: rangeEnd
-                            };
-                            return false;
-                        }
-                    }
-                });
-
-                return overlappingRange;
-            }
-
-            initializeDateRangePicker('#dateRange');
-
-            $('#roomDropdown').change(function() {
+$('#roomDropdown').change(function() {
                 fetchRoomPrices($('#location').val());
             });
 
-            $(document).ready(function() {
-                function addNewRow() {
-                    var rowCount = $('#additionalRowsContainer .form-row').length;
-                    var uniqueSuffix = Date.now();
-                    var newRow = `
-            <div class="form-row" data-row-id="${rowCount + 1}" id="row-${uniqueSuffix}">
-                <div class="form-group col-md-3 col-sm-6 col-12">
-                    <label for="location-${rowCount + 1}" style="color: black">Location</label>
-                    <select class="form-control location" id="location-${uniqueSuffix}" style="width: 234px;">
-                        <option value="">Select location</option>
-                        <option value="Makkah">Makkah</option>
-                        <option value="Madina">Madina</option>
-                    </select>
-                </div>
+// $('#calculateTotalPriceBtn').click(function() {
+//         fetchRoomPrices($('#location').val());
+//         $('#estimateTotalPriceContainer').show();
+//     });
 
-                <div class="form-group col-md-3 col-sm-6 col-12" style="width: 323px; margin-left: -1px;">
-                    <label for="hotel-${rowCount + 1}" style="color: black">Hotel Name</label>
-                    <select class="form-control hotel" id="hotel-${uniqueSuffix}">
-                        <option value="">Select Hotel</option>
-                    </select>
-                </div>
+    $(document).ready(function() {
+    function addNewRow() {
+        var rowCount = $('#additionalRowsContainer .form-row').length;
+        var uniqueSuffix = Date.now();
+        var newRow = `
+        <div class="form-row" data-row-id="${rowCount + 1}" id="row-${uniqueSuffix}">
+            <div class="form-group col-md-2 col-sm-6 col-12">
+                <label for="location-${rowCount + 1}" style="color: black">Location</label>
+                <select class="form-control location" id="location-${uniqueSuffix}" >
+                    <option value="">Select location</option>
+                    <option value="Makkah">Makkah</option>
+                    <option value="Madina">Madina</option>
+                </select>
+            </div>
 
-                <div class="form-group col-md-3 col-sm-6 col-12">
-                    <label for="dateRange-${rowCount + 1}" style="color: black">Check-in / Check-out</label>
-                    <input type="text" class="form-control dateRange" id="dateRange-${uniqueSuffix}">
-                </div>
+            <div class="form-group col-md-2 col-sm-6 col-12" style="width: 323px; margin-left: -1px;">
+                <label for="hotel-${rowCount + 1}" style="color: black">Hotel Name</label>
+                <select class="form-control hotel" id="hotel-${uniqueSuffix}">
+                    <option value="">Select Hotel</option>
+                </select>
+            </div>
 
-                <div class="form-group col-md-3 col-sm-6 col-12 d-flex align-items-end">
-                    <div class="w-100">
-                        <label for="roomDropdown-${rowCount + 1}" style="color: black">Room Type</label>
-                        <div class="input-group">
-                            <select class="form-control roomDropdown" id="roomDropdown-${uniqueSuffix}">
-                                <option value="">Select room type</option>
-                                <option value="Sharing">Sharing</option>
-                                <option value="Double">Double</option>
-                                <option value="Triple">Triple</option>
-                                <option value="Quint">Quint</option>
-                            </select>
-                            <div class="input-group-append">
-                                <a class="btn btn-sm btn-danger removeRowButton" id="removeRowButton-${uniqueSuffix}"><i class="fa fa-minus"></i></a>
-                            </div>
+            <div class="form-group col-md-2 col-sm-6 col-12">
+                <label for="dateRange-${rowCount + 1}" style="color: black">Check-in / Check-out</label>
+                <input type="text" class="form-control dateRange" id="dateRange-${uniqueSuffix}">
+            </div>
+
+            <div class="form-group col-md-3 col-sm-6 col-12 d-flex align-items-end">
+                <div class="w-100">
+                    <label for="roomDropdown-${rowCount + 1}" style="color: black">Room Type</label>
+                    <div class="input-group">
+                        <select class="form-control roomDropdown" id="roomDropdown-${uniqueSuffix}">
+                            <option value="">Select room type</option>
+                            <option value="Sharing">Sharing</option>
+                            <option value="Double">Double</option>
+                            <option value="Triple">Triple</option>
+                            <option value="Quint">Quint</option>
+                        </select>
+                        <div class="input-group-append" >
+                            <button class="btn btn-sm btn-danger subtractRowButton" id="subtractRowButton-${uniqueSuffix}" type="button">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <div class="input-group-text counter" id="counter-${uniqueSuffix}">0</div>
+                            <button class="btn btn-sm btn-primary addcounter" id="addcounter-${uniqueSuffix}" type="button">
+                                <i class="fa fa-plus"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>`;
+            </div>
 
-                    $('#additionalRowsContainer').append(newRow);
-                    initializeDateRangePicker(`#dateRange-${uniqueSuffix}`);
-                }
+            <div class="form-group col-md-1 col-sm-6 col-12">
+                <label for="nights-${uniqueSuffix}" style="color: black">Nights</label>
+                <input type="text" class="form-control nights" id="nights-${uniqueSuffix}" readonly>
+            </div>
 
-                $('#addRowButton').click(function(e) {
-                    e.preventDefault();
-                    addNewRow();
-                });
+            <div class="form-group col-md-2 col-sm-6 col-12 d-flex align-items-end" style="margin-bottom: 34px; margin-left: 0px; height: 66px;">
+                <button class="btn btn-sm btn-danger removeRowButton" id="removeRowButton-${uniqueSuffix}">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>`;
 
-                $('#additionalRowsContainer').on('click', '.removeRowButton', function() {
-                    $(this).closest('.form-row').remove();
-                });
-            });
+        $('#additionalRowsContainer').append(newRow);
 
-            function debounce(func, wait) {
-                let timeout;
-                return function(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func.apply(this, args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
+        // Attach event listeners to new buttons
+        $(`#addcounter-${uniqueSuffix}`).on('click', function() {
+            var counterElement = $(`#counter-${uniqueSuffix}`);
+            var currentCount = parseInt(counterElement.text(), 10);
+            counterElement.text(currentCount + 1);
+        });
+
+        $(`#subtractRowButton-${uniqueSuffix}`).on('click', function() {
+            var counterElement = $(`#counter-${uniqueSuffix}`);
+            var currentCount = parseInt(counterElement.text(), 10);
+            if (currentCount > 0) {
+                counterElement.text(currentCount - 1);
             }
+        });
 
-            $('.location').change(function() {
-                var hotelId = $(this).val();
+        $(`#removeRowButton-${uniqueSuffix}`).on('click', function() {
+            $(`#row-${uniqueSuffix}`).remove();
+        });
 
-                if (hotelId) {
-                    $.ajax({
-                        url: '{{ route('getHotelDetailsById') }}',
-                        method: 'GET',
-                        data: {
-                            hotel_id: hotelId,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            if (response.error) {
-                                console.error(response.error);
-                                return;
-                            }
-
-                            var hotel = response.hotel;
-                            fetchRoomPrices();
-                            var hotelDetailsHtml = `
-                            <div class="card booking-card">
-                                <div class="row no-gutters">
-                                    <div class="col-md-4">
-                                        <img src="${hotel.picture}" class="card-img-top" alt="${hotel.name}" class="img-fluid">
-                                    </div>
-                                    <div class="col-md-8 d-flex flex-column">
-                                        <div class="card-body flex-grow-1">
-                                            <h5 class="card-title">${hotel.name}</h5>
-                                            <p class="star-rating text-warning">${'★'.repeat(hotel.star)}</p>
-                                        </div>
-                                        <div class="d-flex justify-content-end">
-                                            <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now">View</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-
-                            $('#booking-details').html(hotelDetailsHtml);
-                        },
-                        error: function(xhr) {
-                            console.error("Error fetching hotel details:", xhr.responseText);
-                        }
-                    });
-                } else {
-                    $('#booking-details').html('');
-                }
-            });
-
-
-            $(document).on('change', '.location', debounce(function() {
-                var locationId = $(this).val();
-                var hotelDropdown = $(this).closest('.form-row').find('.hotel');
-
-                hotelDropdown.html('<option value="">Select Hotel</option>');
-
-                if (locationId) {
-                    $.ajax({
-                        url: '{{ url('/get-hotels') }}',
-                        type: 'GET',
-                        data: {
-                            ziarat: locationId
-                        },
-                        success: function(response) {
-                            response.forEach(hotel => {
-                                hotelDropdown.append(
-                                    `<option value="${hotel.id}">${hotel.hotel_name}</option>`
-                                );
-                            });
-                        },
-                        error: function(error) {
-                            console.error('Error fetching hotels:', error);
-                        }
-                    });
-                }
-            }, 300));
-
-
-            $(document).on('change', '.hotel, .dateRange, .roomDropdown', debounce(function() {
-    var formRow = $(this).closest('.form-row');
-    var hotelId = formRow.find('.hotel').val();
-    var dateRange = formRow.find('.dateRange').val();
-    var roomType = formRow.find('.roomDropdown').val();
-
-    if (hotelId && dateRange && roomType) {
-        fetchRoomPricesAndDetails(hotelId, dateRange, roomType);
+        initializeDateRangePicker(`#dateRange-${uniqueSuffix}`);
     }
-}, 300));
 
-function fetchRoomPricesAndDetails(hotelId, dateRange, roomType) {
+    $('#addRowButton').click(function(e) {
+        e.preventDefault();
+        addNewRow();
+    });
+
+    $('#additionalRowsContainer').on('click', '.removeRowButton', function() {
+        $(this).closest('.form-row').remove();
+    });
+
+    $(document).on('change', '.hotel, .dateRange, .roomDropdown', debounce(function() {
+        var formRow = $(this).closest('.form-row');
+        var hotelId = formRow.find('.hotel').val();
+        var dateRange = formRow.find('.dateRange').val();
+        var roomType = formRow.find('.roomDropdown').val();
+        var uniqueSuffix = formRow.attr('id').split('-')[1]; // Extract uniqueSuffix from the row id
+
+        if (hotelId && dateRange && roomType) {
+            fetchRoomPricesAndDetails(hotelId, dateRange, roomType, uniqueSuffix);
+        }
+    }, 300));
+});
+
+function fetchRoomPricesAndDetails(hotelId, dateRange, roomType, uniqueSuffix) {
     $.ajax({
         url: '{{ route('getRoomPrices') }}',
         type: 'GET',
@@ -820,6 +744,9 @@ function fetchRoomPricesAndDetails(hotelId, dateRange, roomType) {
         success: function(response) {
             if (response.success) {
                 console.log(response);
+
+                var numDays = response.numDays;
+                $('#nights-' + uniqueSuffix).val(numDays);
 
                 var totalPrices = response.totalPrices;
                 var hotelDetailsHtml = generateHotelDetailsHtml(
@@ -835,12 +762,11 @@ function fetchRoomPricesAndDetails(hotelId, dateRange, roomType) {
 
                 $('#hotelDetailsSection').show();
                 if (response.hotel.hotel_city === 'Makkah') {
-                    $('#makkah-hotels ').append(hotelDetailsHtml);
+                    $('#makkah-hotels').append(hotelDetailsHtml);
                 } else if (response.hotel.hotel_city === 'Madina') {
-                    $('#madina-hotels ').append(hotelDetailsHtml);
+                    $('#madina-hotels').append(hotelDetailsHtml);
                 }
 
-                // Optionally update estimated total price if needed
                 updateEstimatedTotalPrice(totalPrices);
             } else {
                 console.error('Error fetching room prices:', response.message);
@@ -931,69 +857,57 @@ $(document).on('click', '.book-now', function() {
         }
     });
 });
-
-
-
-
-            $(document).ready(function() {
-                $('#visaDropdown').change(function() {
-                    const selectedValue = $(this)
-                        .val();
-
-                    if (selectedValue === 'visaPrice') {
-                        $.ajax({
-                            url: '{{ route('getVisaPrice') }}',
-                            type: 'GET',
-                            data: {
-                                visaType: 'Ummrah',
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    $('#visaPrice').val(response.visaPrice);
-                                    $('#visa-price-with-transport-container')
-                                        .hide();
-                                } else {
-                                    $('#visa-price-container').hide();
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('AJAX Error:', status, error);
-                            }
-                        });
-                    } else if (selectedValue === 'visaPriceWithTransport') {
-                        $.ajax({
-                            url: '{{ route('getVisaPrice') }}',
-                            type: 'GET',
-                            data: {
-                                visaType: 'Ummrah',
-                                transportIncluded: true,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    $('#visaPriceWithTransport').val(
-                                        response.visaPriceWithTransport);
-                                    $('#visa-price-container').hide();
-                                } else {
-                                    $('#visa-price-with-transport-container')
-                                        .hide();
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('AJAX Error:', status, error);
-                            }
-                        });
-                    } else {
-                        $('#visaPrice').val('');
-                        $('#visaPriceWithTransport').val('');
-                        $('#visa-price-container').hide();
-                        $('#visa-price-with-transport-container').hide();
-                    }
-                });
-            });
-
         });
+
+        $('#visaPriceCheckbox').change(function() {
+        if ($(this).is(':checked')) {
+            $.ajax({
+                url: '{{ route('getVisaPrice') }}',
+                type: 'GET',
+                data: {
+                    visaType: 'Ummrah',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#visaPriceInputCheckbox').val(response.visaPrice);
+                        $('#visa-price-with-transport-container-checkbox').hide();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        } else {
+            $('#visaPriceInputCheckbox').val('');
+        }
+    });
+
+    $('#visaPriceWithTransportCheckbox').change(function() {
+        if ($(this).is(':checked')) {
+            $.ajax({
+                url: '{{ route('getVisaPrice') }}',
+                type: 'GET',
+                data: {
+                    visaType: 'Ummrah',
+                    transportIncluded: true,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#visaPriceWithTransportInputCheckbox').val(response.visaPriceWithTransport);
+                        $('#visa-price-container-checkbox').hide();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        } else {
+            $('#visaPriceWithTransportInputCheckbox').val('');
+        }
+    });
+
 
 
 
@@ -1065,6 +979,360 @@ $(document).on('click', '.book-now', function() {
             $('#totalPrice').val(0);
         }
     });
+
+
+$(document).ready(function() {
+    $('#visaPriceWithTransportCheckbox').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#transportFieldsContainer').show();
+        } else {
+            $('#transportFieldsContainer').hide();
+        }
+    });
+});
+
+
+// $(function() {
+//     $('#dateRange').daterangepicker({
+//         opens: 'left',
+//         locale: {
+//             format: 'YYYY-MM-DD'
+//         }
+//     }, function(start, end, label) {
+//         var checkInDate = start.format('YYYY-MM-DD');
+//         var checkOutDate = end.format('YYYY-MM-DD');
+//         var timeDifference = end.diff(start, 'days');
+//         $('#nights').val(timeDifference);
+//     });
+// });
+// $(function() {
+//     $('#dateRange').val('');
+
+//     $('#dateRange').daterangepicker({
+//         opens: 'left',
+//         autoUpdateInput: false,
+//         locale: {
+//             format: 'YYYY-MM-DD',
+//             cancelLabel: 'Clear'
+//         }
+//     });
+
+//     $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+//         var checkInDate = picker.startDate.format('YYYY-MM-DD');
+//         var checkOutDate = picker.endDate.format('YYYY-MM-DD');
+//         var timeDifference = picker.endDate.diff(picker.startDate, 'days');
+
+//         $(this).val(checkInDate + ' - ' + checkOutDate);
+//         $('#nights').val(timeDifference);
+//     });
+
+//     $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
+//         $(this).val(''); // Clear the dateRange input field
+//         $('#nights').val(''); // Clear the nights input field
+//     });
+// });
+
+
+
+
+
+
+
+
+
+
+function initializeDateRangePicker(selector) {
+                $(selector).daterangepicker({
+                    autoUpdateInput: false,
+                    locale: {
+                        cancelLabel: 'Clear',
+                        format: 'YYYY-MM-DD'
+                    }
+                }).on('apply.daterangepicker', function(ev, picker) {
+                    let selectedDateRange = picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate
+                        .format('YYYY-MM-DD');
+                    let overlap = getOverlappingRange(selectedDateRange, selector);
+
+                    if (overlap) {
+                        let newStartDate = moment(overlap.endDate).add(1, 'days').format('YYYY-MM-DD');
+                        let newRange = newStartDate + ' to ' + picker.endDate.format('YYYY-MM-DD');
+
+                        if (newStartDate <= picker.endDate.format('YYYY-MM-DD')) {
+                            alert(
+                                `The selected date range overlaps with an existing one. Only the non-overlapping dates (${newRange}) will be added.`);
+                            $(this).val(newRange);
+                        } else {
+                            alert(
+                                "The selected date range has already been chosen. Please select a different date range.");
+                            $(this).val('');
+                        }
+                    } else {
+                        $(this).val(selectedDateRange);
+                    }
+
+                    fetchRoomPrices();
+                }).on('cancel.daterangepicker', function() {
+                    $(this).val('');
+                    fetchRoomPrices();
+                });
+            }
+
+            function getOverlappingRange(selectedDateRange, currentSelector) {
+                let [selectedStart, selectedEnd] = selectedDateRange.split(' to ').map(date => moment(date));
+                let overlappingRange = null;
+
+                let mainDateRange = $('#dateRange').val();
+                if (mainDateRange && currentSelector !== '#dateRange') {
+                    let [mainStart, mainEnd] = mainDateRange.split(' to ').map(date => moment(date));
+                    if (selectedStart.isSameOrBefore(mainEnd) && selectedEnd.isSameOrAfter(mainStart)) {
+                        overlappingRange = {
+                            startDate: mainStart,
+                            endDate: mainEnd
+                        };
+                        return overlappingRange;
+                    }
+                }
+
+                $('.dateRange').each(function() {
+                    if (this.id !== currentSelector.replace('#', '')) {
+                        let [rangeStart, rangeEnd] = $(this).val().split(' to ').map(date => moment(date));
+                        if (selectedStart.isSameOrBefore(rangeEnd) && selectedEnd.isSameOrAfter(
+                            rangeStart)) {
+                            overlappingRange = {
+                                startDate: rangeStart,
+                                endDate: rangeEnd
+                            };
+                            return false;
+                        }
+                    }
+                });
+
+                return overlappingRange;
+            }
+
+            initializeDateRangePicker('#dateRange');
+
+
+    const roomDropdown = document.getElementById("roomDropdown");
+const counter = document.getElementById("counter");
+const addButton = document.getElementById("addcounter");
+const subtractButton = document.getElementById("subtractRowButton");
+
+function isRoomTypeSelected() {
+    return roomDropdown.value !== '';
+}
+
+roomDropdown.addEventListener("change", () => {
+    if (isRoomTypeSelected()) {
+        counter.textContent = 1;
+    } else {
+        counter.textContent = 0;
+    }
+});
+
+
+addButton.addEventListener("click", () => {
+    if (isRoomTypeSelected()) {
+        const currentValue = parseInt(counter.textContent);
+        counter.textContent = currentValue + 1;
+    } else {
+        alert("Please select a room type before adding.");
+    }
+});
+
+
+subtractButton.addEventListener("click", () => {
+    if (isRoomTypeSelected()) {
+        const currentValue = parseInt(counter.textContent);
+        if (currentValue > 1) {
+            counter.textContent = currentValue - 1;
+        }
+    } else {
+        alert("Please select a room type before subtracting.");
+    }
+});
+
+
+function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func.apply(this, args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            $('.location').change(function() {
+                var hotelId = $(this).val();
+
+                if (hotelId) {
+                    $.ajax({
+                        url: '{{ route('getHotelDetailsById') }}',
+                        method: 'GET',
+                        data: {
+                            hotel_id: hotelId,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.error) {
+                                console.error(response.error);
+                                return;
+                            }
+
+                            var hotel = response.hotel;
+                            fetchRoomPrices();
+                            var hotelDetailsHtml = `
+                            <div class="card booking-card">
+                                <div class="row no-gutters">
+                                    <div class="col-md-4">
+                                        <img src="${hotel.picture}" class="card-img-top" alt="${hotel.name}" class="img-fluid">
+                                    </div>
+                                    <div class="col-md-8 d-flex flex-column">
+                                        <div class="card-body flex-grow-1">
+                                            <h5 class="card-title">${hotel.name}</h5>
+                                            <p class="star-rating text-warning">${'★'.repeat(hotel.star)}</p>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                            $('#booking-details').html(hotelDetailsHtml);
+                        },
+                        error: function(xhr) {
+                            console.error("Error fetching hotel details:", xhr.responseText);
+                        }
+                    });
+                } else {
+                    $('#booking-details').html('');
+                }
+            });
+
+
+            $(document).on('change', '.location', debounce(function() {
+                var locationId = $(this).val();
+                var hotelDropdown = $(this).closest('.form-row').find('.hotel');
+
+                hotelDropdown.html('<option value="">Select Hotel</option>');
+
+                if (locationId) {
+                    $.ajax({
+                        url: '{{ url('/get-hotels') }}',
+                        type: 'GET',
+                        data: {
+                            ziarat: locationId
+                        },
+                        success: function(response) {
+                            response.forEach(hotel => {
+                                hotelDropdown.append(
+                                    `<option value="${hotel.id}">${hotel.hotel_name}</option>`
+                                );
+                            });
+                        },
+                        error: function(error) {
+                            console.error('Error fetching hotels:', error);
+                        }
+                    });
+                }
+            }, 300));
+
+
+
+
+//             document.getElementById('checkInDate').addEventListener('change', calculateNights);
+// document.getElementById('checkOutDate').addEventListener('change', calculateNights);
+
+// function calculateNights() {
+//     var checkInDate = new Date(document.getElementById('checkInDate').value);
+//     var checkOutDate = new Date(document.getElementById('checkOutDate').value);
+
+//     if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
+//         var timeDifference = checkOutDate.getTime() - checkInDate.getTime();
+//         var nights = timeDifference / (1000 * 3600 * 24);
+//         document.getElementById('nights').value = nights;
+//     } else {
+//         document.getElementById('nights').value = 0;
+//     }
+// }
+
+
+$(document).ready(function() {
+    function collectFormData() {
+        var formData = [];
+
+        $('#additionalRowsContainer .form-row').each(function() {
+            var row = $(this);
+            var location = row.find('.location').val();
+            var hotel = row.find('.hotel').val();
+            var dateRange = row.find('.dateRange').val();
+            var roomType = row.find('.roomDropdown').val();
+            var nights = row.find('.nights').val();
+            var counter = row.find('.counter').text();
+
+            if(location && hotel && dateRange && roomType && nights && counter) {
+                formData.push({
+                    location: location,
+                    hotel: hotel,
+                    dateRange: dateRange,
+                    roomType: roomType,
+                    nights: nights,
+                    counter: counter
+                });
+            }
+        });
+
+        var visaPrice = $('#visaPriceCheckbox').is(':checked') ? 1 : 0;
+        var visaPriceWithTransport = $('#visaPriceWithTransportCheckbox').is(':checked') ? 1 : 0;
+        var additionalInput = $('#additionalInputField').val();
+
+        return {
+            formData: formData,
+            visaPrice: visaPrice,
+            visaPriceWithTransport: visaPriceWithTransport,
+            additionalInput: additionalInput
+        };
+    }
+
+    $('#calculateTotalPriceBtn').on('click', function(e) {
+        e.preventDefault();
+        var data = collectFormData();
+        console.log(data);  // Ensure the data is correct
+
+        $.ajax({
+            url: '{{ route("storeFormData") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                data: data
+            },
+            success: function(response) {
+                if(response.success) {
+                    alert('Data stored successfully!');
+                    // Handle the display of stored data
+                } else {
+                    alert('Failed to store data.');
+                }
+            },
+            error: function(xhr) {
+                alert('An error occurred. Please try again.');
+                console.error(xhr.responseText);  // Log any server error
+            }
+        });
+    });
+});
+
+
+
+
+
+
+
+
 </script>
 
 

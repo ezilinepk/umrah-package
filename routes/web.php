@@ -183,6 +183,8 @@ Route::get('/create' ,  [ZiratController::class , 'create'])->name('ziarat.creat
 
 Route::Post('/create' ,  [ZiratController::class , 'store'])->name('ziarat.store');
 Route::get('/ziarat-price/{name}', [ZiratController::class, 'getZiaratPrice'])->name('ziarat.price');
+Route::get('/store-form-data', [FormdataController::class, 'storeFormData'])->name('storeFormData');
+
 
 
 
