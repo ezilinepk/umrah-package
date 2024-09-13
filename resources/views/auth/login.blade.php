@@ -901,7 +901,7 @@ $('#calculateubl').on('click', function() {
                         console.error('Error fetching room prices:', response.message);
                     }
 
-                    
+
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX Error:', status, error);
@@ -1079,46 +1079,6 @@ $(document).ready(function() {
     });
 });
 
-
-// $(function() {
-//     $('#dateRange').daterangepicker({
-//         opens: 'left',
-//         locale: {
-//             format: 'YYYY-MM-DD'
-//         }
-//     }, function(start, end, label) {
-//         var checkInDate = start.format('YYYY-MM-DD');
-//         var checkOutDate = end.format('YYYY-MM-DD');
-//         var timeDifference = end.diff(start, 'days');
-//         $('#nights').val(timeDifference);
-//     });
-// });
-// $(function() {
-//     $('#dateRange').val('');
-
-//     $('#dateRange').daterangepicker({
-//         opens: 'left',
-//         autoUpdateInput: false,
-//         locale: {
-//             format: 'YYYY-MM-DD',
-//             cancelLabel: 'Clear'
-//         }
-//     });
-
-//     $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
-//         var checkInDate = picker.startDate.format('YYYY-MM-DD');
-//         var checkOutDate = picker.endDate.format('YYYY-MM-DD');
-//         var timeDifference = picker.endDate.diff(picker.startDate, 'days');
-
-//         $(this).val(checkInDate + ' - ' + checkOutDate);
-//         $('#nights').val(timeDifference);
-//     });
-
-//     $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
-//         $(this).val(''); // Clear the dateRange input field
-//         $('#nights').val(''); // Clear the nights input field
-//     });
-// });
 
 
 
