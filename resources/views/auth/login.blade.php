@@ -900,6 +900,8 @@ $('#calculateubl').on('click', function() {
                     } else {
                         console.error('Error fetching room prices:', response.message);
                     }
+
+                    
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX Error:', status, error);
