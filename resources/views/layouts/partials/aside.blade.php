@@ -142,7 +142,7 @@
                         <span class="svg-icon menu-icon">
                             <i class="fa fa-house"></i> <!-- Use 'fa-house' for the house icon -->
                         </span>
-                        <h2 class="menu-text">Add Hotels</h2>
+                        <h2 class="menu-text">Add Packages</h2>
                     </a>
                 </li>
 
@@ -166,11 +166,11 @@
 
 
                 <li class="menu-item" aria-haspopup="true">
-                    <a href="{{ route('ziarat.index') }}" class="menu-link">
+                    <a href="{{ route('packag.index') }}" class="menu-link">
                         <span class="svg-icon menu-icon">
-                            <i class="fa fa-bus"></i> <!-- Airplane icon -->
+                            <i class="fa fa-list"></i>
                         </span>
-                        <h3 class="menu-text">Ziarat</h3>
+                        <h3 class="menu-text">Add Packages</h3>
                     </a>
                 </li>
 

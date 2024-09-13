@@ -114,12 +114,12 @@
 
                     <div>
                         <img id="selectedImage" src="" alt="Selected Image"
-                            style="margin-top: 20px; width: 100%; max-width: 1350pxpx; height: auto; display: block; margin-left: auto; margin-right: auto;" />
+                            style="margin-top: 20px; width: 100%; max-width: 1350px; height:  1000px; display: block; margin-left: auto; margin-right: auto;" />
                     </div>
 
                     <div id="selectedImageContainer">
                         <div id="imageThumbnails">
-                         
+
                         </div>
                     </div>
 

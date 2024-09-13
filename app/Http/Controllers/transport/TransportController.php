@@ -56,6 +56,47 @@ public function getTransportPrice(Request $request)
     return response()->json(['error' => 'Transport type not found'], 404);
 }
 
+public function gettransporttype()
+{
+    $transports = Transport::all(['transport_type']);
+
+    return response()->json($transports);
+}
+
+public function edit($id)
+{
+    $transport = Transport::findOrFail($id);
+    return view('transport.edit' , compact('transport'));
+}
+
+public function update(Request $request, $id)
+{
+    // Validate the request data
+    $request->validate([
+        'transport_type' => 'required|string',
+        'price_airport_makkah' => 'nullable|numeric',
+        'price_makkah_madina' => 'nullable|numeric',
+        'price_madina_makkah' => 'nullable|numeric',
+        'currency' => 'required|in:usd,pkr',
+    ]);
+
+    $transport = Transport::findOrFail($id);
+
+
+    $transport->update([
+        'transport_type' => $request->input('transport_type'),
+        'price_airport_makkah' => $request->input('price_airport_makkah'),
+        'price_makkah_madina' => $request->input('price_makkah_madina'),
+        'price_madina_makkah' => $request->input('price_madina_makkah'),
+        'currency' => $request->input('currency'),
+    ]);
+
+
+    return redirect()->route('transport.index')->with('success', 'Transport details updated successfully.');
+}
+
+
+
 
 
 }

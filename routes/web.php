@@ -7,6 +7,9 @@ use Dcblogdev\Dropbox\Facades\Dropbox;
 use App\Http\Controllers\hotel\HotelController;
 use App\Http\Controllers\Api\UserAuthController;
 use App\Http\Controllers\DropBoxFileUploadController;
+use App\Http\Controllers\FormdataController;
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\PackagesController;
 use App\Http\Controllers\transport\TransportController;
 use App\Http\Controllers\visa\VisaController;
 use App\Http\Controllers\zirat\ZiratController;
@@ -156,9 +159,11 @@ Route::get('/hotel/create' , [HotelController::class ,  'create'])->name('hotel.
 Route::post('/hotel/store', [HotelController::class, 'store'])->name('hotel.store');
 Route::get('/get-hotels-by-location', [HotelController::class, 'getHotelsByLocationid'])->name('getHotelsByLocationid');
 Route::get('/get-Room-Prices' , [HotelController::class , 'getRoomPrices'])->name('getRoomPrices');
-Route::get('/edit-form/{id}' , [HotelController::class, 'edit'])->name('visa.edit');
+Route::get('/edit-form/{id}' , [HotelController::class, 'edit'])->name('hotel.edit');
 Route::get('/get-hotels', [HotelController::class, 'getHotels'])->name('hotels.byLocation');
 Route::get('/get-hotel-details', [HotelController::class, 'getHotelDetailsById'])->name('getHotelDetailsById');
+Route::put('get-hotel-update/{id}', [HotelController::class, 'update'])->name('hotel.update');
+
 
 
 
@@ -173,6 +178,9 @@ Route::get('transport/index' , [TransportController::class , 'index'])->name('tr
 Route::get('transport/create', [TransportController::class , 'create'])->name('transport.create');
 Route::post('/transports', [TransportController::class, 'store'])->name('transports.store');
 Route::get('/get-transport-price', [TransportController::class, 'getTransportPrice'])->name('get.transport.price');
+Route::get('/getTransports', [TransportController::class , 'gettransporttype'])->name('get.transport.type');
+Route::get('/getTransportedit/{id}', [TransportController::class , 'edit'])->name('transport.edit');
+Route::put('transport/{id}', [TransportController::class, 'update'])->name('transport.update');
 Route::get('/get-hotel-distance', 'HotelController@getHotelDistance');
 
 
@@ -180,10 +188,16 @@ Route::get('/get-hotel-distance', 'HotelController@getHotelDistance');
 Route::get('/index' ,  [ZiratController::class , 'index'])->name('ziarat.index');
 Route::get('/create' ,  [ZiratController::class , 'create'])->name('ziarat.create');
 // Route::get('/edit' ,  [ZiratController::class , 'edit'])->name('ziarat.edit');
-
 Route::Post('/create' ,  [ZiratController::class , 'store'])->name('ziarat.store');
 Route::get('/ziarat-price/{name}', [ZiratController::class, 'getZiaratPrice'])->name('ziarat.price');
+
+
 Route::get('/store-form-data', [FormdataController::class, 'storeFormData'])->name('storeFormData');
+Route::get('/index' , [PackagesController::class , 'index'])->name('packag.index');
+Route::get('/create' , [PackagesController::class , 'create'])->name('packag.create');
+Route::post('/store' , [PackagesController::class , 'store'])->name('packag.store');
+
+
 
 
 

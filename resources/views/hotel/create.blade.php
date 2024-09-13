@@ -6,7 +6,7 @@
 
 @endsection
 
-@section('pageName',__('Add Hotel'))
+@section('pageName',__('Add Hotel Pckages'))
 
 @section('content')
 
@@ -16,7 +16,7 @@
                 <span class="card-icon">
                     <i class="flaticon2-download text-primary"></i>
                 </span>
-                <h3 class="card-label">Create User</h3><small>All fields marked with asterisks(*) are required.</small>
+                <h3 class="card-label">Create Packages</h3><small>All fields marked with asterisks(*) are required.</small>
             </div>
         </div>
         <form method="post" action="{{ route('hotel.store') }}" enctype="multipart/form-data">

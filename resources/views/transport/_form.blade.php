@@ -6,6 +6,13 @@
             <select class="form-control @error('transport_type') is-invalid state-invalid @enderror" name="transport_type" id="transport_type" onchange="showPriceFields()" required>
                 <option value="">Select Transport Type...</option>
                 <option value="bus">Bus</option>
+                <option value="Private car">Private car</option>
+                <option value="GMC 5-7 Person">GMC 5-7 Person</option>
+                <option value="Hiace 10 person">Hiace 10 person</option>
+                <option value="Coaster 20 Person">Coaster 20 Person</option>
+                <option value="Shared Transport By Bus">Shared Transport By Bus</option>
+
+
                 <!-- Add more transport types as needed -->
             </select>
             <div id="validationServerTransportTypeFeedback" class="invalid-feedback">This Field is Required.</div>
