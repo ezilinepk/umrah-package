@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 class FormdataController extends Controller
 {
+
     public function storeFormData(Request $request)
     {
         // Remove the dd statement after verifying the request data

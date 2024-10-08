@@ -19,8 +19,9 @@
                 <h3 class="card-label">EDit</h3><small>All fields marked with asterisks(*) are required.</small>
             </div>
         </div>
-        <form method="post" action="{{ route('hotel.store') }}" class="needs-validation" novalidate enctype="multipart/form-data">
+        <form action="{{ route('hotel.update', $hotel->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="card-body">
                 <!-- Include Form -->
                 @include('hotel._editform')

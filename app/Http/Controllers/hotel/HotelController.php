@@ -8,6 +8,7 @@ use App\Models\HotelImage;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\HotelPackage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,73 +23,73 @@ class HotelController extends Controller
 
     public function create()
     {
+        $packages = HotelPackage::all();
 
-        $role = Role::get();
-        return view('hotel.create', compact('role'));
+        return view('hotel.create', compact( 'packages'));
     }
 
     public function store(Request $request)
     {
+
         // dd($request->all());
-        $validatedData = $request->validate([
-            'hotel_name' => 'required|string|max:255',
-            'hotel_city' => 'required|string|max:255',
-            'hotel_google_map' => 'nullable|url',
-            'hotel_star' => 'required|integer|min:1|max:5',
-            'hotel_distance' => 'nullable|numeric',
-            'hotel_picture' => 'nullable|image|mimes:png,jpg,avif,jpeg,webp',
-            'room_price_sharing' => 'required|numeric',
-            'room_price_sharing_currency' => 'required|in:PKR,USD',
-            'room_price_quint' => 'required|numeric',
-            'room_price_quint_currency' => 'required|in:PKR,USD',
-            'room_price_triple' => 'required|numeric',
-            'room_price_triple_currency' => 'required|in:PKR,USD',
-            'room_price_double' => 'required|numeric',
-            'room_price_double_currency' => 'required|in:PKR,USD',
-            'room_price_quad' => 'required|numeric',
-            'room_price_quad_currency' => 'required|in:PKR,USD',
-            'hotel_room_details' => 'nullable|string',
-            'hotel_details' => 'nullable|string',
-            'hotel_images.*' => 'image|mimes:jpeg,png,jpg, webp,gif,avif,svg|max:2048',
+          $validatedData = $request->validate([
+            'hotel_name.*' => 'required|string|max:255',
+            'hotel_city.*' => 'required|string|max:255',
+            'hotel_google_map.*' => 'nullable|url',
+            'hotel_star.*' => 'required|integer|min:1|max:5',
+            'hotel_distance.*' => 'nullable|numeric',
+            'hotel_picture.*' => 'nullable|image|mimes:png,jpg,avif,jpeg,webp|max:2048',
+            'room_price_sharing.*' => 'required|numeric',
+            'room_price_quint.*' => 'required|numeric',
+            'room_price_triple.*' => 'required|numeric',
+            'room_price_double.*' => 'required|numeric',
+            'room_price_quad.*' => 'required|numeric',
+            'hotel_images.*.*' => 'image|mimes:jpeg,png,jpg,webp,gif,avif,svg|max:2048',
+            'package_name.*' => 'required',
         ]);
 
-        // Additional dynamic pricing validation
-        foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day) {
-            foreach (['sharing', 'quint', 'double', 'triple'] as $room_type) {
-                $validatedData = array_merge($validatedData, $request->validate([
-                    $day . '_price_' . $room_type => 'nullable|numeric',
-                    $day . '_price_' . $room_type . '_currency' => 'nullable|string|in:PKR,USD',
-                ]));
+        if (is_array($request->hotel_name)) {
+            foreach ($request->hotel_name as $index => $hotelName) {
+                $hotelData = [
+                    'hotel_name' => $hotelName,
+                    'hotel_city' => $request->hotel_city[$index],
+                    'hotel_google_map' => $request->hotel_google_map[$index] ?? null,
+                    'hotel_star' => $request->hotel_star[$index],
+                    'hotel_distance' => $request->hotel_distance[$index] ?? null,
+                    'room_price_sharing' => $request->room_price_sharing[$index],
+                    'room_price_quint' => $request->room_price_quint[$index],
+                    'room_price_triple' => $request->room_price_triple[$index],
+                    'room_price_double' => $request->room_price_double[$index],
+                    'room_price_quad' => $request->room_price_quad[$index],
+                    'package_name' => $request->package_name[$index],
+                ];
+
+                $hotel = Hotel::create($hotelData);
+
+                if ($request->file('hotel_picture') && isset($request->file('hotel_picture')[$index])) {
+                    $file = $request->file('hotel_picture')[$index];
+                    $file_name = 'hotel-' . time() . '-' . $file->getClientOriginalName();
+                    $file->move(public_path('images/'), $file_name);
+                    $hotel->update(['hotel_picture' => $file_name]);
+                }
+
+                if ($request->hasFile('hotel_images')) {
+                    foreach ($request->file('hotel_images') as $image) {
+                        $image_name = 'hotel-' . time() . '-' . $image->getClientOriginalName();
+                        $image->move(public_path('images/hotels'), $image_name, 'public');
+
+                        HotelImage::create([
+                            'hotel_id' => $hotel->id,
+                            'hotel_picture' => $image_name,
+                        ]);
+                    }
             }
         }
 
-        // Save hotel main information
-        $hotel = Hotel::create($validatedData);
-
-
-        if ($request->hasFile('hotel_picture')) {
-            $file = $request->file('hotel_picture');
-            $file_name = 'hotel-' . time() . '-' . $file->getClientOriginalName();
-            $file->move(public_path('images/'), $file_name);
-            $hotel->update(['hotel_picture' => $file_name]);
-        }
-
-
-        if ($request->hasFile('hotel_images')) {
-            foreach ($request->file('hotel_images') as $image) {
-                $image_name = 'hotel-' . time() . '-' . $image->getClientOriginalName();
-                $image->move(public_path('images/hotels'), $image_name, 'public');
-
-                HotelImage::create([
-                    'hotel_id' => $hotel->id,
-                    'hotel_picture' => $image_name,
-                ]);
-            }
-        }
-
-        // Redirect with a success message
-        return redirect()->route('hotel.index')->with('success', 'Hotel added successfully.');
     }
+        return redirect()->route('hotel.index')->with('success', 'Hotels added successfully.');
+    }
+
 
     public function edit($id)
     {
@@ -284,13 +285,12 @@ class HotelController extends Controller
 
 public function getRoomPrices(Request $request)
 {
-
-    $location = $request->input('hotel_name');
+    $location = $request->input('hotel_city');
     $dateRange = $request->input('dateRange');
-    $roomType = $request->input('roomType');
     $visaPrice = (float) $request->input('visaPrice', 0);
     $visaPriceWithTransport = (float) $request->input('visaPriceWithTransport', 0);
 
+    // Validate date range format
     if (strpos($dateRange, ' - ') !== false) {
         list($startDate, $endDate) = explode(' - ', $dateRange);
     } elseif (strpos($dateRange, ' to ') !== false) {
@@ -301,49 +301,99 @@ public function getRoomPrices(Request $request)
 
     $startDate = \Carbon\Carbon::parse($startDate);
     $endDate = \Carbon\Carbon::parse($endDate);
-
-
     $numDays = $startDate->diffInDays($endDate) + 1;
 
+    $hotels = Hotel::where('hotel_city', $location)->get();
+    // dd($hotels);
 
-    $hotels = Hotel::where('id', $location)->get();
+    $roomTypes = [
+        'sharing' => 'room_price_sharing',
+        'quint' => 'room_price_quint',
+        'triple' => 'room_price_triple',
+        'quad' => 'room_price_quad',
+        'double' => 'room_price_double'
+    ];
 
-    $roomPrices = [];
-    $totalPrices = [];
-    $dailyPrices = [];
+    $priceResults = [];
 
     foreach ($hotels as $hotel) {
-        $roomPrice = 0;
+        $hotelPrices = [];
 
-        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
-            $dayOfWeek = strtolower($date->format('l'));
-            $priceField = "{$dayOfWeek}_price_" . strtolower($roomType);
 
-            if ($hotel->$priceField) {
-                $roomPrice += $hotel->$priceField;
+        foreach ($roomTypes as $roomTypeName => $priceField) {
+            if (!is_null($hotel->$priceField)) {
+                $numPersons = 1;
+
+
+                switch (strtolower($roomTypeName)) {
+                    case 'quad':
+                        $numPersons = 4;
+                        break;
+                    case 'triple':
+                        $numPersons = 3;
+                        break;
+                    case 'double':
+                        $numPersons = 2;
+                        break;
+                        case 'sharing':
+                            $numPersons = 2;
+                            break;
+                    case 'quint':
+                        $numPersons = 5;
+                        break;
+                }
+
+
+                $baseRoomPrice = (float) $hotel->$priceField;
+
+
+                $roomPrice = $baseRoomPrice * $numDays;
+
+
+                $roomPricePerPerson = $roomPrice / $numPersons;
+
+
+                $hotelPrices[] = [
+                    'room_type' => ucfirst($roomTypeName),
+                    'price_per_person' => number_format($roomPricePerPerson, 2),
+                    'price_per_day' => number_format($roomPricePerPerson / $numDays, 2),
+                ];
             }
         }
 
-        // Calculate prices
-        $roomPrices[$hotel->id] = 'Room price for ' . $numDays . ' days: $' . number_format($roomPrice, 2);
-        $dailyPrices[$hotel->id] = number_format($roomPrice / $numDays, 2);
-        $totalPrices[$hotel->id] = number_format($roomPrice + $visaPrice + $visaPriceWithTransport, 2);
+
+        $priceResults[] = [
+            'id' => $hotel->id,
+            'hotel_name' => $hotel->hotel_name,
+            'hotel_city' => $hotel->hotel_city,
+            'package_name' => $hotel->package_name,
+            'hotel_stars' => $hotel->stars,
+            'picture' => asset('images/' . $hotel->hotel_picture),
+            'prices' => $hotelPrices
+        ];
+        // dd($priceResults);
+
     }
 
-    // Return the response with additional 'numDays' field
+
+    // dd($priceResults);
+
+
     return response()->json([
-        'success' => true,
-        'hotel' => $hotels->first(),
-        'roomPrices' => $roomPrices,
-        'dailyPrices' => $dailyPrices,
-        'visaPrice' => $visaPrice,
-        'visaPriceWithTransport' => $visaPriceWithTransport,
-        'totalPrices' => $totalPrices,
-        'picture' => asset('images/' . $hotels->first()->hotel_picture),
-        'dateRange' => $dateRange,
-        'numDays' => $numDays,  // Include the number of days in the response
+     'success' => true,
+        'hotel_location' => $location,
+        'date_range' => $dateRange,
+        'num_days' => $numDays,
+        'visa_price' => $visaPrice,
+        'visa_price_with_transport' => $visaPriceWithTransport,
+        'prices' => $priceResults
     ]);
 }
+
+
+
+
+
 
 
 
@@ -408,9 +458,67 @@ public function getRoomPrices(Request $request)
         return response()->json($hotels);
     }
 
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'hotel_name' => 'required|string|max:255',
+            'hotel_city' => 'required|string|max:255',
+            'hotel_google_map' => 'nullable|url',
+            'hotel_star' => 'required|integer|min:1|max:5',
+            'hotel_distance' => 'nullable|numeric',
+            'hotel_picture' => 'nullable|image|mimes:png,jpg,avif,jpeg,webp',
+            'room_price_sharing' => 'required|numeric',
+            'room_price_sharing_currency' => 'required|in:PKR,USD',
+            'room_price_quint' => 'required|numeric',
+            'room_price_quint_currency' => 'required|in:PKR,USD',
+            'room_price_triple' => 'required|numeric',
+            'room_price_triple_currency' => 'required|in:PKR,USD',
+            'room_price_double' => 'required|numeric',
+            'room_price_double_currency' => 'required|in:PKR,USD',
+            'room_price_quad' => 'required|numeric',
+            'room_price_quad_currency' => 'required|in:PKR,USD',
+            'hotel_room_details' => 'nullable|string',
+            'hotel_details' => 'nullable|string',
+            'hotel_images.*' => 'image|mimes:jpeg,png,jpg,webp,gif,avif,svg|max:2048',
+        ]);
 
+        foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day) {
+            foreach (['sharing', 'quint', 'double', 'triple'] as $room_type) {
+                $validatedData = array_merge($validatedData, $request->validate([
+                    $day . '_price_' . $room_type => 'nullable|numeric',
+                    $day . '_price_' . $room_type . '_currency' => 'nullable|string|in:PKR,USD',
+                ]));
+            }
+        }
 
+        $hotel = Hotel::findOrFail($id);
+        $hotel->update($validatedData);
 
+        if ($request->hasFile('hotel_picture')) {
+            if ($hotel->hotel_picture && file_exists(public_path('images/' . $hotel->hotel_picture))) {
+                unlink(public_path('images/' . $hotel->hotel_picture));
+            }
+            $file = $request->file('hotel_picture');
+            $file_name = 'hotel-' . time() . '-' . $file->getClientOriginalName();
+            $file->move(public_path('images/'), $file_name);
+            $hotel->update(['hotel_picture' => $file_name]);
+        }
+
+        // Handle hotel images
+        if ($request->hasFile('hotel_images')) {
+            foreach ($request->file('hotel_images') as $image) {
+                $image_name = 'hotel-' . time() . '-' . $image->getClientOriginalName();
+                $image->move(public_path('images/hotels'), $image_name);
+
+                HotelImage::create([
+                    'hotel_id' => $hotel->id,
+                    'hotel_picture' => $image_name,
+                ]);
+            }
+        }
+
+        return redirect()->route('hotel.index')->with('success', 'Hotel updated successfully.');
+    }
 
 
 

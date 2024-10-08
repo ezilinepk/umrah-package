@@ -50,7 +50,7 @@
                         <td>{{ ucwords($transport->price_madina_makkah) }}</td>
                         <td>
 
-                                <a href="" class="btn btn-sm btn-light-warning font-weight-bold mr-2" data-toggle="tooltip" title="Edit User"><i class="fa fa-pen fa-1x"></i> </a>
+                                <a href="{{ route('transport.edit', ['id' => $transport->id]) }}"class="btn btn-sm btn-light-warning font-weight-bold mr-2" data-toggle="tooltip" title="Edit User"><i class="fa fa-pen fa-1x"></i> </a>
 
                             @can('delete user')
                                 <span data-toggle="modal" data-target="#exampleModal">

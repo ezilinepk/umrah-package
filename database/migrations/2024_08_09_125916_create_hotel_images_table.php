@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('hotel_images', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('hotel_id');
+            $table->id(); // This is an alias for unsignedBigInteger('id') with auto-increment.
+            $table->unsignedBigInteger('hotel_id'); // Ensure this matches the type of the referenced column.
             $table->foreign('hotel_id')->references('id')->on('hotels')->onDelete('cascade');
             $table->string('hotel_picture')->nullable();
             $table->timestamps();
@@ -25,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('hotel_images', function (Blueprint $table) {
+            $table->dropForeign(['hotel_id']); // Drop the foreign key constraint first
+        });
+
         Schema::dropIfExists('hotel_images');
     }
 };

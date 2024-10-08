@@ -86,21 +86,26 @@ class UserAuthController extends Controller
     {
         $hotel = Hotel::with('images')
                       ->where('id', $request->id)
-                      ->first();
+                      ->first(); 
 
-        $daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        if (!$hotel) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hotel not found'
+            ], 404);
+        }
+
         $roomTypes = ['sharing', 'quad', 'quint', 'triple', 'double'];
         $dailyPrices = [];
 
-        foreach ($daysOfWeek as $day) {
-            foreach ($roomTypes as $roomType) {
-                $columnName = "{$day}_price_{$roomType}";
-                $dailyPrices[$day][$roomType] = $hotel->$columnName;
-            }
-        }
-
-        return response()->json(['success' => true, 'hotel' => $hotel, 'dailyPrices' => $dailyPrices ,    'images' => $hotel->images]);
+        return response()->json([
+            'success' => true,
+            'hotel' => $hotel,
+            'dailyPrices' => $dailyPrices,
+            'images' => $hotel->images
+        ]);
     }
+
 
 
 

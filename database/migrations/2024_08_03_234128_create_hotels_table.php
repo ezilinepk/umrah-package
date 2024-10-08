@@ -15,35 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('hotel_name');
             $table->string('hotel_city');
+            $table->string('package_name');
             $table->string('hotel_google_map')->nullable();
             $table->unsignedTinyInteger('hotel_star');
-            $table->decimal('hotel_distance', 5, 1)->nullable();
-            $table->string('hotel_picture')->nullable(); // Store filename or URL
-            $table->decimal('room_price_sharing', 8, 2)->nullable();
-            $table->string('room_price_sharing_currency', 3)->default('PKR'); // Default to PKR
-            $table->decimal('room_price_quint', 8, 2)->nullable();
-            $table->string('room_price_quint_currency', 3)->default('PKR'); // Default to PKR
-            $table->decimal('room_price_triple', 8, 2)->nullable();
-            $table->string('room_price_triple_currency', 3)->default('PKR'); // Default to PKR
-            $table->decimal('room_price_double', 8, 2)->nullable();
-            $table->string('room_price_double_currency', 3)->default('PKR'); // Default to PKR
-            $table->decimal('room_price_quad', 8, 2)->nullable();
-            $table->string('room_price_quad_currency', 3)->default('PKR'); // Default to PKR
-            $table->text('hotel_room_details')->nullable();
-            $table->text('hotel_details')->nullable();
-
-            // Daily prices for sharing room
-            $this->addDailyPriceColumns($table, 'sharing');
-
-            // Daily prices for quint room
-            $this->addDailyPriceColumns($table, 'quint');
-
-            // Daily prices for triple room
-            $this->addDailyPriceColumns($table, 'triple');
-
-            // Daily prices for double room
-            $this->addDailyPriceColumns($table, 'double');
-
+            $table->decimal('hotel_distance', 8, 1);
+            $table->string('hotel_picture')->nullable();
+            $table->json('hotel_images')->nullable();
+            $table->decimal('room_price_sharing', 10, 2);
+            $table->decimal('room_price_quint', 10, 2);
+            $table->decimal('room_price_triple', 10, 2);
+            $table->decimal('room_price_quad', 10, 2);
+            $table->decimal('room_price_double', 10, 2);
             $table->timestamps();
         });
     }
@@ -54,15 +36,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('hotels');
-    }
-
-    private function addDailyPriceColumns(Blueprint $table, $roomType)
-    {
-        $daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-        foreach ($daysOfWeek as $day) {
-            $table->decimal("{$day}_price_{$roomType}", 8, 2)->nullable();
-            $table->string("{$day}_price_{$roomType}_currency")->nullable();
-        }
     }
 };

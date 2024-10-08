@@ -6,7 +6,7 @@
 
 @endsection
 
-@section('pageName',__('Hotels'))
+@section('pageName',__('Hotels packages'))
 
 @section('content')
 
@@ -16,7 +16,7 @@
                 <span class="card-icon">
                     <i class="flaticon2-download text-primary"></i>
                 </span>
-                <h3 class="card-label">Hotels List</h3>
+                <h3 class="card-label">Hotels Packages List</h3>
             </div>
             <div class="card-toolbar">
                 <!--begin::Button-->
@@ -50,7 +50,7 @@
                         <td>{{ ucwords($hotel->hotel_distance) }}</td>
                         <td>
 
-                                <a href="{{ route('visa.edit',['id'=>$hotel->id]) }}" class="btn btn-sm btn-light-warning font-weight-bold mr-2" data-toggle="tooltip" title="Edit User"><i class="fa fa-pen fa-1x"></i> </a>
+                                <a href="{{ route('hotel.edit',['id'=>$hotel->id]) }}" class="btn btn-sm btn-light-warning font-weight-bold mr-2" data-toggle="tooltip" title="Edit User"><i class="fa fa-pen fa-1x"></i> </a>
 
                             @can('delete user')
                                 <span data-toggle="modal" data-target="#exampleModal">
