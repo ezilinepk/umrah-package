@@ -46,6 +46,11 @@ class HotelController extends Controller
             'room_price_quad.*' => 'required|numeric',
             'hotel_images.*.*' => 'image|mimes:jpeg,png,jpg,webp,gif,avif,svg|max:2048',
             'package_name.*' => 'required',
+            'hotel_room_detail.*' => 'required|string|max:255',
+            'hotel_details.*' => 'required',
+            'phone_number.*' => 'required|string',
+            'email.*' => 'required|email',
+            'address.*' => 'required|string',
         ]);
 
         if (is_array($request->hotel_name)) {
@@ -62,6 +67,11 @@ class HotelController extends Controller
                     'room_price_double' => $request->room_price_double[$index],
                     'room_price_quad' => $request->room_price_quad[$index],
                     'package_name' => $request->package_name[$index],
+                    'hotel_room_detail' =>  $request->hotel_room_detail[$index],
+                    'hotel_details' =>  $request->hotel_details[$index],
+                    'phone_numbers' => $request->phone_number[$index],
+                    'emails' => $request->email[$index],
+                    'addresses' => $request->address[$index],
                 ];
 
                 $hotel = Hotel::create($hotelData);
@@ -287,10 +297,11 @@ public function getRoomPrices(Request $request)
 {
     $location = $request->input('hotel_city');
     $dateRange = $request->input('dateRange');
+    $totalPerson =  $request->input('totalperson', 1);
+    // dd($totalPerson);
     $visaPrice = (float) $request->input('visaPrice', 0);
     $visaPriceWithTransport = (float) $request->input('visaPriceWithTransport', 0);
 
-    // Validate date range format
     if (strpos($dateRange, ' - ') !== false) {
         list($startDate, $endDate) = explode(' - ', $dateRange);
     } elseif (strpos($dateRange, ' to ') !== false) {
@@ -304,8 +315,6 @@ public function getRoomPrices(Request $request)
     $numDays = $startDate->diffInDays($endDate) + 1;
 
     $hotels = Hotel::where('hotel_city', $location)->get();
-    // dd($hotels);
-
     $roomTypes = [
         'sharing' => 'room_price_sharing',
         'quint' => 'room_price_quint',
@@ -319,11 +328,9 @@ public function getRoomPrices(Request $request)
     foreach ($hotels as $hotel) {
         $hotelPrices = [];
 
-
         foreach ($roomTypes as $roomTypeName => $priceField) {
             if (!is_null($hotel->$priceField)) {
-                $numPersons = 1;
-
+                $numPersons = 1; // Default to 1 person
 
                 switch (strtolower($roomTypeName)) {
                     case 'quad':
@@ -335,52 +342,50 @@ public function getRoomPrices(Request $request)
                     case 'double':
                         $numPersons = 2;
                         break;
-                        case 'sharing':
-                            $numPersons = 2;
-                            break;
+                    case 'sharing':
+                        $numPersons = 6;
+                        break;
                     case 'quint':
                         $numPersons = 5;
                         break;
                 }
 
-
-                $baseRoomPrice = (float) $hotel->$priceField;
-
+                $baseRoomPrice =  $hotel->$priceField;
 
                 $roomPrice = $baseRoomPrice * $numDays;
 
+                $roomPricePerPerson = $roomPrice / $numPersons * $totalPerson;
 
-                $roomPricePerPerson = $roomPrice / $numPersons;
 
+                if ($totalPerson < 1) {
+                    $totalPerson = 1;
+                }
 
                 $hotelPrices[] = [
                     'room_type' => ucfirst($roomTypeName),
                     'price_per_person' => number_format($roomPricePerPerson, 2),
                     'price_per_day' => number_format($roomPricePerPerson / $numDays, 2),
+                    'total_price_for_persons' => number_format($roomPricePerPerson, 2), // Show total price for the persons
                 ];
             }
         }
-
 
         $priceResults[] = [
             'id' => $hotel->id,
             'hotel_name' => $hotel->hotel_name,
             'hotel_city' => $hotel->hotel_city,
             'package_name' => $hotel->package_name,
-            'hotel_stars' => $hotel->stars,
+            'hotel_stars' => $hotel->hotel_star,
+            'hotel_distance' => $hotel->hotel_distance,
             'picture' => asset('images/' . $hotel->hotel_picture),
             'prices' => $hotelPrices
         ];
-        // dd($priceResults);
-
     }
 
-
-    // dd($priceResults);
-
+    // Check and ensure that the $totalPerson input is correct
 
     return response()->json([
-     'success' => true,
+        'success' => true,
         'hotel_location' => $location,
         'date_range' => $dateRange,
         'num_days' => $numDays,

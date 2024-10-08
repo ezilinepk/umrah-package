@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking.com</title>
+    <title>Atour.com</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -97,11 +97,11 @@
         }
 
         .search-form {
-            max-width: 1000px;
+            max-width: 1050px;
             padding: 20px;
             background: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
-            color: black
+            color: black;
             margin: auto;
 
         }
@@ -139,7 +139,7 @@
 
         .booking-card img {
             width: 100%;
-            height: 200px;
+            height: 270px;
             object-fit: cover;
         }
 
@@ -256,7 +256,7 @@
               }
 
               .search-form {
-    max-height: 500px;
+    max-height: 400px;
     overflow-y: auto;
     padding-right: 15px;
 }
@@ -274,6 +274,61 @@
 }
 
 
+.book-now {
+    padding: 1.1em 2.7em;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2.3px;
+            font-weight: 500;
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-radius: 45px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease 0s;
+            cursor: pointer;
+            outline: none;
+        }
+
+
+
+.book-now:hover {
+    background-color: rgb(21,114,232);
+            box-shadow: 0px 15px 20px rgb(21,114,232);
+            color: #fff;
+            transform: translateY(-7px)
+}
+
+.book-now:active  {
+    transform: translateY(-1px);
+}
+.hotel-name{
+padding: 1.1em 2.7em;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2.3px;
+            font-weight: 500;
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-radius: 45px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease 0s;
+            cursor: pointer;
+            outline: none;
+}
+ .hotel-name:hover {
+
+    background-color: rgb(21,114,232);
+            box-shadow: 0px 15px 20px rgb(21,114,232);
+            color: #fff;
+            transform: translateY(-7px)
+}
+
+
+
+
+
 
 
 
@@ -284,7 +339,7 @@
     <header>
         <div class="container-fluid header">
             <div class="logo-container">
-                <img src="{{ asset('assets/dummy/booking-com-2048.png') }}" alt="Primary Logo" style="height: 150px;">
+                <img src="{{ asset('images/logo/logo-3 (1).png') }}" alt="Primary Logo" style="height: 35px;">
             </div>
             <div class="auth-buttons">
                 <a href="{{ route('ulogin') }}" class="btn btn-outline-primary">Sign In</a>
@@ -292,15 +347,15 @@
         </div>
     </header>
 
-    <div class="content">
+    <div class="content"  style="">
         <div class="bg-img">
-            <div >
+            <div  style="text-align: center; margin-bottom: 265px;">
                 <h1 id="hero-banner-header1" class="fade-in" data-selenium="hero-banner-h1">Mecca hotels & places to stay</h1>
                 <h2 id="hero-banner-header2" class="fade-in hero-banner-header2" data-selenium="hero-banner-h2">
                     Search to compare prices and discover great deals with free cancellation
                 </h2>
 
-                <div class="container">
+                <div class="container" >
                     <div class="search-form">
                             <div class="form-row">
                                 <div class="form-group col-md-4 col-sm-6 col-12">
@@ -337,12 +392,17 @@
                             <div id="additionalRowsContainer" class="mt-3"></div>
 
                             <div class="form-row align-items-end" style="margin-left: 4px;">
-                                <div class="col-md-2">
-                                    <input type="text" class="form-control" id="additionalInputField" placeholder="Enter Name">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" id="additionalInputField" placeholder=" Applier Name">
                                 </div>
 
-                                <div class="col-md-2">
-                                    <button type="button" id="calculateubl" class="btn btn-success">search</button>
+                                <div class="form-row align-items-end" style="margin-left: 4px;">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" id="numberofperson" placeholder="Number of person">
+                                    </div>
+
+                                <div class="col-md-3">
+                                    <button type="button" id="calculateubl" class=" texi btn btn-primary">Search</button>
                                 </div>
                             </div>
                     </div>
@@ -352,12 +412,13 @@
             </div>
         </div>
     </div>
+</div>
 
     <div class="hotelDetails" id="hotelDetailsSection" style="display: none;">
         <div class="container" style="max-width: 2000px">
+ </div>
+         </div>
 
-        </div>
-    </div>
 
 
 
@@ -375,12 +436,18 @@
 
     <script>
         $(document).ready(function() {
-    function fetchRoomPrices() {
-        var hotelName = $('#ziaratName').val();
-        var dateRange = $('#dateRange').val();
-        var roomType = $('#roomDropdown').val();
-        var visaPrice = parseFloat($('#visaPriceInputCheckbox').val()) || 0;
-        var visaPriceWithTransport = parseFloat($('#visaPriceWithTransportInputCheckbox').val()) || 0;
+            function fetchRoomPrices() {
+    var hotelName = $('#ziaratName').val();
+    var dateRange = $('#dateRange').val();
+    var totalperson = $('#numberofperson').val(); // Get the value
+
+    console.log({ hotel_city: hotelName, dateRange: dateRange, totalperson: totalperson });
+
+    if (!hotelName || !dateRange || !totalperson) {
+        alert("Please fill in all fields");
+        return;
+    }
+
 
         $.ajax({
     url: '{{ route('getRoomPrices') }}',
@@ -388,8 +455,7 @@
     data: {
         hotel_city: hotelName,
         dateRange: dateRange,
-        visaPrice: visaPrice,
-        visaPriceWithTransport: visaPriceWithTransport,
+        totalperson: totalperson,
         _token: '{{ csrf_token() }}'
     },
     success: function(response) {
@@ -399,6 +465,8 @@
             var prices = response.prices;
             var dateRange = response.date_range;
             var numDays = response.num_days;
+            var hotelStars = response.hotel_stars;
+            var hoteldistance = response.hotel_distance;
             var visaPrice = response.visa_price || 0;
             var visaPriceWithTransport = response.visa_price_with_transport || 0;
 
@@ -418,42 +486,38 @@
                 }
                 return groups;
             }, {});
-
             Object.keys(groupedHotels).forEach(function(packageName) {
-                var packageHotels = groupedHotels[packageName];
-                var packageSectionHtml = `
-                    <div class="card package-details">
-                           <div class="card-header">
-                            <h3>Package: ${packageName}</h3>
-                        </div>
-                         <div class="form-group">
+    var packageHotels = groupedHotels[packageName];
+
+    var packageSectionHtml = `
+        <div class="card package-details">
+            <div class="card-header">
+                <h3>Package: ${packageName}</h3>
+            </div>
+            <div class="form-group">
                 <div class="row">
                     <div class="col-md-6">
-                        <div id="MakkahHotelsContainer"></div>
-                      <div id="makkah-hotels-${packageName}"></div>
-
+                        <h4 class="hotel-name" style="margin-left: 5px;">Makkah Hotels</h4>
+                        <div id="makkah-hotels-${packageName}"></div>
                     </div>
                     <div class="col-md-6">
-                        <div id="MadinaHotelsContainer"></div>
-              <div id="madina-hotels-${packageName}"></div>
+                        <h4 class="hotel-name">Madina Hotels</h4>
+                        <div id="madina-hotels-${packageName}"></div>
                     </div>
                 </div>
             </div>
-                    </div>
+        </div>
+    `;
 
-                `;
-
-                // Append the package section if it doesn't already exist
-                if ($(`#package-${packageName}`).length === 0) {
-                    $('#hotelDetailsSection .container').append(packageSectionHtml);
-                }
-
-                // Add hotels to the appropriate sections
+    if ($(`#package-${packageName}`).length === 0) {
+        $('#hotelDetailsSection .container').append(packageSectionHtml);
+    }
                 packageHotels.makkah.forEach(function(hotel, index) {
                     var hotelName = hotel.hotel_name;
-                    var hotelStars = hotel.hotel_stars || 'N/A';
                     var roomPrices = hotel.prices;
                     var hotelPicture = hotel.picture || '';
+                    var hotelStars = hotel.hotel_stars || 'N/A';
+                    var hoteldistance = hotel.hotel_distance;
 
                     var hotelDetailsHtml = `
                         <div class="card booking-card">
@@ -466,28 +530,33 @@
                                         <h5 class="card-title">${hotelName} (${hotel.hotel_city})</h5>
                                         <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
                                         <p class="card-text"><strong>Date: ${dateRange}</strong></p>
+                                         <p class="card-text"><strong>Distance From Haram pak: ${hoteldistance }K.m</strong></p>
+
                                         <p class="card-text">Number of Nights: ${numDays}</p>
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Sharing</th>
+                                                 <th>Double</th>
+                                                   <th>Triple</th>
+                                                        <th>Quad</th>
                                                     <th>Quint</th>
-                                                    <th>Triple</th>
-                                                    <th>Quad</th>
-                                                    <th>Double</th>
+                                                    <th>Sharing</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody id="room-prices-${packageName}-${index}">
+
                                                 <tr id="room-price-row-${packageName}-${index}">
-                                                    <td id="price-sharing-${packageName}-${index}"></td>
-                                                    <td id="price-quint-${packageName}-${index}"></td>
-                                                    <td id="price-triple-${packageName}-${index}"></td>
-                                                    <td id="price-quad-${packageName}-${index}"></td>
                                                     <td id="price-double-${packageName}-${index}"></td>
+                                                    <td id="price-triple-${packageName}-${index}"></td>
+                                                     <td id="price-quad-${packageName}-${index}"></td>
+                                                    <td id="price-quint-${packageName}-${index}"></td>
+                                                  <td id="price-sharing-${packageName}-${index}"></td>
+
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" >View</a>
+                                        <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" >View details</a>
                                     </div>
                                 </div>
                             </div>
@@ -502,15 +571,15 @@
                         var pricePerPerson = room.price_per_person || 0;
 
                         if (roomType.includes('sharing')) {
-                            $(`#price-sharing-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-sharing-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('quint')) {
-                            $(`#price-quint-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-quint-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('triple')) {
-                            $(`#price-triple-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-triple-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('quad')) {
-                            $(`#price-quad-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-quad-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('double')) {
-                            $(`#price-double-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-double-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         }
                     });
                 });
@@ -520,6 +589,8 @@
                     var hotelStars = hotel.hotel_stars || 'N/A';
                     var roomPrices = hotel.prices;
                     var hotelPicture = hotel.picture || '';
+                    var hotelStars = hotel.hotel_stars || 'N/A';
+                    var hoteldistance = hotel.hotel_distance;
 
                     var hotelDetailsHtml = `
                         <div class="card booking-card">
@@ -531,29 +602,33 @@
                                     <div class="card-body">
                                         <h5 class="card-title">${hotelName} (${hotel.hotel_city})</h5>
                                         <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
+                                         <p class="card-text"><strong>Distance from Hotel to madina pak: ${hoteldistance }K.m</strong></p>
                                         <p class="card-text"><strong>Date: ${dateRange}</strong></p>
                                         <p class="card-text">Number of Nights: ${numDays}</p>
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Sharing</th>
+                                                 <th>Double</th>
+                                                   <th>Triple</th>
+                                                        <th>Quad</th>
                                                     <th>Quint</th>
-                                                    <th>Triple</th>
-                                                    <th>Quad</th>
-                                                    <th>Double</th>
+                                                    <th>Sharing</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody id="room-prices-${packageName}-${index}">
+
                                                 <tr id="room-price-row-${packageName}-${index}">
-                                                    <td id="price-sharing-${packageName}-${index}"></td>
-                                                    <td id="price-quint-${packageName}-${index}"></td>
-                                                    <td id="price-triple-${packageName}-${index}"></td>
-                                                    <td id="price-quad-${packageName}-${index}"></td>
                                                     <td id="price-double-${packageName}-${index}"></td>
+                                                    <td id="price-triple-${packageName}-${index}"></td>
+                                                     <td id="price-quad-${packageName}-${index}"></td>
+                                                    <td id="price-quint-${packageName}-${index}"></td>
+                                                  <td id="price-sharing-${packageName}-${index}"></td>
+
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" style="margin-top: 37px;">View</a>
+                                        <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" style="margin-top: 37px;">View details</a>
                                     </div>
                                 </div>
                             </div>
@@ -567,15 +642,15 @@
                         var pricePerPerson = room.price_per_person || 0;
 
                         if (roomType.includes('sharing')) {
-                            $(`#price-sharing-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-sharing-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('quint')) {
-                            $(`#price-quint-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-quint-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('triple')) {
-                            $(`#price-triple-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-triple-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('quad')) {
-                            $(`#price-quad-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-quad-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         } else if (roomType.includes('double')) {
-                            $(`#price-double-${packageName}-${index}`).text(`$${pricePerPerson}`);
+                            $(`#price-double-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
                         }
                     });
                 });
@@ -591,6 +666,7 @@
 
 
         }
+
 
     $('#calculateubl').click(function() {
         fetchRoomPrices();
@@ -672,26 +748,78 @@ $('#addRowButton').click(function(e) {
 $('#additionalRowsContainer').on('click', '.removeRowButton', function() {
     $(this).closest('.form-row').remove();
 });
+let selectedDateRanges = [];
 
 function initializeDateRangePicker(dateRangeSelector, nightsSelector) {
-        $(dateRangeSelector).daterangepicker({
-            locale: {
-                format: 'YYYY-MM-DD'
-            },
-            autoUpdateInput: false
-        });
+    var today = moment().startOf('day'); // Use moment.js to get the current date
 
-        $(dateRangeSelector).on('apply.daterangepicker', function(ev, picker) {
-            var startDate = picker.startDate;
-            var endDate = picker.endDate;
+    $(dateRangeSelector).daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD'
+        },
+        autoUpdateInput: false,
+        minDate: today, // Disable previous dates
+        isInvalidDate: function(date) {
+            return date.isBefore(today, 'day');
+        }
+    });
 
-            var nights = endDate.diff(startDate, 'days') + 1;
+    $(dateRangeSelector).on('apply.daterangepicker', function(ev, picker) {
+        var startDate = picker.startDate;
+        var endDate = picker.endDate;
+        var selectedRange = startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD');
 
-            $(this).val(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
+        // Check for overlapping or duplicate date ranges
+        if (isDateRangeDuplicate(startDate, endDate)) {
+            alert('This date range overlaps or is already selected in another row. Please choose a different range.');
+            $(this).val(''); // Clear the input
+            $(nightsSelector).val('');
+            return;
+        }
 
-            $(nightsSelector).val(nights);
-        });
-    }
+        // Store the selected date range
+        selectedDateRanges.push({ startDate: startDate, endDate: endDate });
+
+        // Calculate the number of nights
+        var nights = endDate.diff(startDate, 'days') + 1;
+        $(this).val(selectedRange);
+        $(nightsSelector).val(nights);
+    });
+
+    $(dateRangeSelector).on('cancel.daterangepicker', function() {
+        $(this).val('');
+        $(nightsSelector).val('');
+    });
+
+    $(document).on('click', '.removeRowButton', function() {
+        var row = $(this).closest('.form-row');
+        var dateRange = row.find(dateRangeSelector).val();
+        removeSelectedDateRange(dateRange); // Remove the date range from the selectedDateRanges array when the row is removed
+        row.remove();
+    });
+}
+
+function isDateRangeDuplicate(startDate, endDate) {
+    var isDuplicate = false;
+    selectedDateRanges.forEach(function(range) {
+        if (
+            (startDate.isSameOrBefore(range.endDate) && endDate.isSameOrAfter(range.startDate))
+        ) {
+            isDuplicate = true;
+        }
+    });
+    return isDuplicate;
+}
+
+function removeSelectedDateRange(dateRange) {
+    if (!dateRange) return;
+
+    let [start, end] = dateRange.split(' - ').map(date => moment(date));
+    selectedDateRanges = selectedDateRanges.filter(function(range) {
+        return !(start.isSame(range.startDate) && end.isSame(range.endDate));
+    });
+}
+
 });
 $('#calculateubl').on('click', function() {
     $('#hotelDetailsSection .container').empty();
@@ -700,6 +828,7 @@ $('#calculateubl').on('click', function() {
         var hotelId = formRow.find('.location').val();
         var dateRange = formRow.find('.dateRange').val();
         var uniqueSuffix = formRow.attr('id').split('-')[1];
+        var totalperson = $('#numberofperson').val()
 
         if (hotelId && dateRange) {
             $.ajax({
@@ -708,6 +837,7 @@ $('#calculateubl').on('click', function() {
                 data: {
                     hotel_city: hotelId,
                     dateRange: dateRange,
+                    totalperson: totalperson,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
@@ -717,11 +847,14 @@ $('#calculateubl').on('click', function() {
                         var prices = response.prices;
                         var dateRange = response.date_range;
                         var numDays = response.num_days;
+                        var hoteldistance = response.hotel_distance;
+                        var hotelStars = response.hotel_stars;
+
+
 
                         $(`#nights-${uniqueSuffix}`).val(numDays);
                         $('#hotelDetailsSection').show();
 
-                        // Group hotels by package and city
                         var groupedHotels = prices.reduce(function(groups, hotel) {
                             var packageName = hotel.package_name || 'No Package';
                             var city = hotel.hotel_city.toLowerCase();
@@ -739,7 +872,6 @@ $('#calculateubl').on('click', function() {
                             return groups;
                         }, {});
 
-                        // Create or update package sections
                         Object.keys(groupedHotels).forEach(function(packageName) {
                             var packageHotels = groupedHotels[packageName];
                             var $packageSection = $(`#package-${packageName}`);
@@ -753,9 +885,11 @@ $('#calculateubl').on('click', function() {
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-6">
+                                                  <h4 class="hotel-name">Makkah Hotels</h4>
                                                     <div id="makkah-hotels-${packageName}"></div>
                                                 </div>
                                                 <div class="col-md-6">
+                                                 <h4 class="hotel-name">Madina Hotels</h4>
                                                     <div id="madina-hotels-${packageName}"></div>
                                                 </div>
                                             </div>
@@ -765,69 +899,71 @@ $('#calculateubl').on('click', function() {
                                 $('#hotelDetailsSection .container').append(packageSectionHtml);
                             }
 
-                            // Append hotels to their respective city sections
                             packageHotels.makkah.forEach(function(hotel) {
                                 var hotelName = hotel.hotel_name;
-                                var hotelStars = hotel.hotel_stars || 'N/A';
+                                var hotelStars = hotel.hotel_star || 'N/A';
                                 var roomPrices = hotel.prices;
                                 var hotelPicture = hotel.picture || '';
+                                var hoteldistance = hotel.hotel_distance;
+
 
                                 var hotelDetailsHtml = `
-                                    <div class="card booking-card">
-                                        <div class="row no-gutters">
-                                            <div class="col-md-4">
-                                                <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
-                                            </div>
-                                            <div class="col-md-8">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">${hotelName} (Makkah)</h5>
-                                                    <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
-                                                    <p class="card-text"><strong>Date: ${dateRange}</strong></p>
-                                                    <p class="card-text">Number of Nights: ${numDays}</p>
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Sharing</th>
-                                                                <th>Quint</th>
-                                                                <th>Triple</th>
-                                                                <th>Quad</th>
-                                                                <th>Double</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="room-prices-${packageName}">
-                                                            <tr>
-                                                                <td class="price-sharing-${packageName}"></td>
-                                                                <td class="price-quint-${packageName}"></td>
-                                                                <td class="price-triple-${packageName}"></td>
-                                                                <td class="price-quad-${packageName}"></td>
-                                                                <td class="price-double-${packageName}"></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                    <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now">View</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
+    <div class="card booking-card">
+        <div class="row no-gutters">
+            <div class="col-md-3">
+                <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
+            </div>
+            <div class="col-md-9">
+                <div class="card-body">
+                    <h5 class="card-title">${hotelName} (Makkah)</h5>
+                    <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
+                    <p class="card-text"><strong>Date: ${dateRange}</strong></p>
+                    <p class="card-text"><strong>Distance from Hotel to Haram pak: ${hoteldistance} K.m</strong></p>
+                    <p class="card-text">Number of Nights: ${numDays}</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Double</th>
+                                <th>Triple</th>
+                                <th>Quad</th>
+                                <th>Quint</th>
+                                <th>Sharing</th>
+                            </tr>
+                        </thead>
+                        <tbody class="room-prices-${packageName}">
+                            <tr>
+                                <td class="price-double-${packageName}"></td>
+                                <td class="price-triple-${packageName}"></td>
+                                <td class="price-quad-${packageName}"></td>
+                                <td class="price-quint-${packageName}"></td>
+                                <td class="price-sharing-${packageName}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- "View details" button moved below the table -->
+                    <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" style="margin-top: 10px;">View details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
 
                                 $(`#makkah-hotels-${packageName}`).append(hotelDetailsHtml);
 
-                                // Populate room prices
                                 roomPrices.forEach(function(room) {
                                     var roomType = room.room_type.toLowerCase();
                                     var pricePerPerson = room.price_per_person || 0;
 
                                     if (roomType.includes('sharing')) {
-                                        $(`.price-sharing-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-sharing-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('quint')) {
-                                        $(`.price-quint-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-quint-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('triple')) {
-                                        $(`.price-triple-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-triple-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('quad')) {
-                                        $(`.price-quad-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-quad-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('double')) {
-                                        $(`.price-double-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-double-${packageName}`).text(`SAR${pricePerPerson}`);
                                     }
                                 });
                             });
@@ -837,45 +973,49 @@ $('#calculateubl').on('click', function() {
                                 var hotelStars = hotel.hotel_stars || 'N/A';
                                 var roomPrices = hotel.prices;
                                 var hotelPicture = hotel.picture || '';
+                                var hoteldistance = hotel.hotel_distance;
+
 
                                 var hotelDetailsHtml = `
-                                    <div class="card booking-card">
-                                        <div class="row no-gutters">
-                                            <div class="col-md-4">
-                                                <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
-                                            </div>
-                                            <div class="col-md-8">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">${hotelName} (Madina)</h5>
-                                                    <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
-                                                    <p class="card-text"><strong>Date: ${dateRange}</strong></p>
-                                                    <p class="card-text">Number of Nights: ${numDays}</p>
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Sharing</th>
-                                                                <th>Quint</th>
-                                                                <th>Triple</th>
-                                                                <th>Quad</th>
-                                                                <th>Double</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="room-prices-${packageName}">
-                                                            <tr>
-                                                                <td class="price-sharing-${packageName}"></td>
-                                                                <td class="price-quint-${packageName}"></td>
-                                                                <td class="price-triple-${packageName}"></td>
-                                                                <td class="price-quad-${packageName}"></td>
-                                                                <td class="price-double-${packageName}"></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                    <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now">View</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
+    <div class="card booking-card">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">${hotelName} (Madina)</h5>
+                    <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
+                    <p class="card-text"><strong>Date: ${dateRange}</strong></p>
+                    <p class="card-text"><strong>Distance from Hotel to Madina pak: ${hoteldistance} K.m</strong></p>
+                    <p class="card-text">Number of Nights: ${numDays}</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Double</th>
+                                <th>Triple</th>
+                                <th>Quad</th>
+                                <th>Quint</th>
+                                <th>Sharing</th>
+                            </tr>
+                        </thead>
+                        <tbody class="room-prices-${packageName}">
+                            <tr>
+                                <td class="price-double-${packageName}"></td>
+                                <td class="price-triple-${packageName}"></td>
+                                <td class="price-quad-${packageName}"></td>
+                                <td class="price-quint-${packageName}"></td>
+                                <td class="price-sharing-${packageName}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- "View details" button moved below the table -->
+                    <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" style="margin-top: 10px;">View details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
 
                                 $(`#madina-hotels-${packageName}`).append(hotelDetailsHtml);
 
@@ -884,15 +1024,15 @@ $('#calculateubl').on('click', function() {
                                     var pricePerPerson = room.price_per_person || 0;
 
                                     if (roomType.includes('sharing')) {
-                                        $(`.price-sharing-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-sharing-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('quint')) {
-                                        $(`.price-quint-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-quint-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('triple')) {
-                                        $(`.price-triple-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-triple-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('quad')) {
-                                        $(`.price-quad-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-quad-${packageName}`).text(`SAR${pricePerPerson}`);
                                     } else if (roomType.includes('double')) {
-                                        $(`.price-double-${packageName}`).text(`$${pricePerPerson}`);
+                                        $(`.price-double-${packageName}`).text(`SAR${pricePerPerson}`);
                                     }
                                 });
                             });
@@ -925,21 +1065,31 @@ $(document).on('click', '.book-now', function() {
         },
         success: function(response) {
             if (response.success) {
+                console.log(response);
 
                 $('.hotel_name').text(response.hotel.hotel_name);
                 $('.star-rating').text('★'.repeat(response.hotel.hotel_star));
                 $('.hotel_details').text(response.hotel.hotel_details);
+                $('.email').html('<strong>Email:</strong> ' + response.hotel.emails);
+                $('.phone_number').html( '<strong>Phone number:</strong> ' +response.hotel.phone_numbers);
+                $('.address').html( '<strong>Address :</strong> ' + response.hotel.addresses);
 
                 $('#imageThumbnails').empty();
                 $('#selectedImage').attr('src', '');
+
+                $('#galleryImages').empty();
 
                 let images = response.images.slice(0, 15);
                 images.forEach((image, index) => {
                     let thumbnail = `<img src="{{ asset('images/hotels') }}/${image.hotel_picture}" alt="${response.hotel.hotel_name}" data-image-src="{{ asset('images/hotels') }}/${image.hotel_picture}" class="${index === 0 ? 'selected' : ''}" />`;
                     $('#imageThumbnails').append(thumbnail);
+
                     if (index === 0) {
                         $('#selectedImage').attr('src', `{{ asset('images/hotels') }}/${image.hotel_picture}`);
                     }
+
+                    let galleryImage = `<div class="gallery-image"><img src="{{ asset('images/hotels') }}/${image.hotel_picture}" alt="${response.hotel.hotel_name}" /></div>`;
+                    $('#galleryImages').append(galleryImage);
                 });
 
                 $('#imageThumbnails img').on('click', function() {
@@ -950,20 +1100,42 @@ $(document).on('click', '.book-now', function() {
                 });
 
                 $('#hotelCarousel .carousel-inner').empty();
-                response.images.forEach((image, index) => {
+                images.forEach((image, index) => {
                     let activeClass = index === 0 ? 'active' : '';
-                    let carouselItem = `<div class="carousel-item ${activeClass}">
-                        <img src="{{ asset('images/hotels/') }}/${image.hotel_picture}" class="d-block w-100" alt="${response.hotel.hotel_name}">
-                    </div>`;
+                    let carouselItem = `
+                        <div class="carousel-item ${activeClass}">
+                            <img src="{{ asset('images/hotels/') }}/${image.hotel_picture}" class="d-block w-100" alt="${response.hotel.hotel_name}">
+                        </div>`;
                     $('#hotelCarousel .carousel-inner').append(carouselItem);
                 });
 
-                let carousel = new bootstrap.Carousel('#hotelCarousel');
-                carousel.cycle();
+                let roomPriceTable = `
+                    <table class="table table-bordered">
+                                                      <thead>
+                                                       <th>Sharing</th>
+                                                    <th>Quint</th>
+                                                    <th>Triple</th>
+                                                    <th>Quad</th>
+                                                    <th>Double</th>
+                                                        </thead>
+                                                       <tbody class="room-prices">
+                                                            <tr>
+                                                                <td>SAR${response.dailyPrices.sharing}</td>
+                                <td>SAR${response.dailyPrices.quint}</td>
+                                <td>SAR${response.dailyPrices.triple}</td>
+                                <td>SAR${response.dailyPrices.quad}</td>
+                                <td>SAR${response.dailyPrices.double}</td>
+                                                            </tr>
+                                                        </tbody>
+
+                    </table>`;
+
+                $('.hotel_price_table').html(roomPriceTable);
             }
         }
     });
 });
+
 
 
 
@@ -981,7 +1153,7 @@ $('#visaPriceWithTransportCheckbox').change(function() {
             },
             success: function(response) {
                 if (response.success) {
-                    console.log('Visa Price with Transport:', response.visaPriceWithTransport);  // Log the visa price with transport
+                    console.log('Visa Price with Transport:', response.visaPriceWithTransport);
 
                     $('#visaPriceWithTransportInputCheckbox').val(response.visaPriceWithTransport);
                     $('#visa-price-container-checkbox').hide();
@@ -1087,11 +1259,12 @@ $(document).ready(function() {
 
 
 
-
-
 function initializeDateRangePicker(selector) {
+    let today = moment().startOf('day');  // Get today's date
+
     $(selector).daterangepicker({
         autoUpdateInput: false,
+        minDate: today,
         locale: {
             cancelLabel: 'Clear',
             format: 'YYYY-MM-DD'
@@ -1165,8 +1338,8 @@ function getOverlappingRange(selectedDateRange, currentSelector) {
     return overlappingRange;
 }
 
-initializeDateRangePicker('#dateRange');
 
+initializeDateRangePicker('#dateRange');
 
 
 

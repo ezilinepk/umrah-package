@@ -24,6 +24,11 @@ class Hotel extends Model
         'room_price_double',
         'room_price_quad',
         'package_name',
+        'hotel_room_detail',
+        'hotel_details',
+        'phone_numbers',
+        'emails',
+        'addresses'
 
 
 

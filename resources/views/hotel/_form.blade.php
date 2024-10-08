@@ -19,6 +19,32 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="col-md-3">
+                    <label class="form-label" for="phone_number">Phone number <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control @error('phone_number') is-invalid state-invalid @enderror" name="phone_number[]" id="phone_number" placeholder="Enter phone Name..." required>
+                    <div id="validationServerHotelNameFeedback" class="invalid-feedback">This Field is Required.</div>
+                    @error('phone_number')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="email">Email <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control @error('email') is-invalid state-invalid @enderror" name="email[]" id="email" placeholder="Enter phone Name..." required>
+                    <div id="validationServerHotelNameFeedback" class="invalid-feedback">This Field is Required.</div>
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label" for="address">address <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control @error('address') is-invalid state-invalid @enderror" name="address[]" id="address" placeholder="Enter phone Name..." required>
+                    <div id="validationServerHotelNameFeedback" class="invalid-feedback">This Field is Required.</div>
+                    @error('address')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
             <!-- Hotel Details Rows -->
@@ -147,6 +173,29 @@
                     </div>
                     <div id="validationServerRoomPriceDoubleFeedback" class="invalid-feedback">This Field is Required.</div>
                     @error('room_price_double')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+
+
+            </div>
+
+            <div class="row" style="margin-left: 40px;">
+                <div class="col-md-4">
+                    <label class="form-label" for="hotel_room_detail">Hotel Room Detail <b class="text-danger">*</b></label>
+                    <input type="number" name="hotel_room_detail[]" id="hotel_room_detail" class="form-control @error('hotel_room_detail') is-invalid @enderror" >
+                    <div id="validationServerHotelRoomDetailFeedback" class="invalid-feedback">This field is required.</div>
+                    @error('hotel_room_detail')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="hotel_details">Hotel Details <b class="text-danger">*</b></label>
+                    <input type="text" name="hotel_details[]" id="hotel_details" class="form-control @error('hotel_details') is-invalid @enderror" >
+                    <div id="validationServerHotelDetailsFeedback" class="invalid-feedback">This field is required.</div>
+                    @error('hotel_details')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

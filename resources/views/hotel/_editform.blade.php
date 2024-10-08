@@ -77,43 +77,12 @@
             <label class="form-label" for="room_price_sharing">Sharing Room Price <b class="text-danger">*</b></label>
             <div class="input-group">
                 <input type="number" step="0.01" class="form-control @error('room_price_sharing') is-invalid state-invalid @enderror" name="room_price_sharing" id="room_price_sharing" placeholder="Enter Sharing Room Price..." value="{{ old('room_price_sharing', $hotel->room_price_sharing) }}" required>
-                <select class="form-control @error('room_price_sharing_currency') is-invalid state-invalid @enderror" name="room_price_sharing_currency" id="room_price_sharing_currency" required>
-                    <option value="PKR" {{ (old('room_price_sharing_currency', $hotel->room_price_sharing_currency) == 'PKR') ? 'selected' : '' }}>PKR</option>
-                </select>
+
             </div>
             <div id="validationServerRoomPriceSharingFeedback" class="invalid-feedback">This Field is Required.</div>
             @error('room_price_sharing')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="form-group">
-
-            <div class="form-group">
-                <div class="row">
-                    <!-- Daily Prices Header -->
-                    <div class="col-md-12">
-                        <label class="form-label">Sharing Prices</label>
-                    </div>
-
-                    <!-- Daily Prices Fields -->
-                    @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                        <div class="col-md-2">
-                            <label class="form-label" for="{{ $day }}_price_sharing">{{ ucfirst($day) }} Price</label>
-                            <div class="input-group">
-                                <input type="number" step="0.01" class="form-control @error("{$day}_price_sharing") is-invalid state-invalid @enderror" name="{{ $day }}_price_sharing" id="{{ $day }}_price_sharing" placeholder="Enter {{ ucfirst($day) }} Price..." value="{{ old("{$day}_price_sharing", $hotel->{"{$day}_price_sharing"}) }}">
-                                <select class="form-control @error("{$day}_price_sharing_currency") is-invalid state-invalid @enderror" name="{{ $day }}_price_sharing_currency" id="{{ $day }}_price_sharing_currency">
-                                    <option value="PKR" {{ (old("{$day}_price_sharing_currency", $hotel->{"{$day}_price_sharing_currency"}) == 'PKR') ? 'selected' : '' }}>PKR</option>
-                                </select>
-                            </div>
-                            @error("{$day}_price_sharing")
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    @endforeach
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -125,10 +94,6 @@
             <label class="form-label" for="room_price_quint">Quint Room Price <b class="text-danger">*</b></label>
             <div class="input-group">
                 <input type="number" step="0.01" class="form-control @error('room_price_quint') is-invalid state-invalid @enderror" name="room_price_quint" id="room_price_quint" placeholder="Enter Quint Room Price..." value="{{ old('room_price_quint', $hotel->room_price_quint) }}" required>
-                <select class="form-control @error('room_price_quint_currency') is-invalid state-invalid @enderror" name="room_price_quint_currency" id="room_price_quint_currency" required>
-                    <option value="PKR" {{ old('room_price_quint_currency', $hotel->room_price_quint_currency) == 'PKR' ? 'selected' : '' }}>PKR</option>
-                    <option value="USD" {{ old('room_price_quint_currency', $hotel->room_price_quint_currency) == 'USD' ? 'selected' : '' }}>USD</option>
-                </select>
             </div>
             <div id="validationServerRoomPriceQuintFeedback" class="invalid-feedback">This Field is Required.</div>
             @error('room_price_quint')
@@ -136,30 +101,7 @@
             @enderror
         </div>
     </div>
-    <div class="card-body">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-12 mt-3">
-                    <label class="form-label">Quint Room Daily Prices</label>
-                </div>
-                @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                    <div class="col-md-2">
-                        <label class="form-label" for="{{ $day }}_price_quint">{{ ucfirst($day) }} Price</label>
-                        <div class="input-group">
-                            <input type="number" step="0.01" class="form-control @error("{$day}_price_quint") is-invalid state-invalid @enderror" name="{{ $day }}_price_quint" id="{{ $day }}_price_quint" placeholder="Enter {{ ucfirst($day) }} Price..." value="{{ old("{$day}_price_quint", $hotel->{"{$day}_price_quint"}) }}">
-                            <select class="form-control @error("{$day}_price_quint_currency") is-invalid state-invalid @enderror" name="{{ $day }}_price_quint_currency" id="{{ $day }}_price_quint_currency">
-                                <option value="PKR" {{ old("{$day}_price_quint_currency", $hotel->{"{$day}_price_quint_currency"}) == 'PKR' ? 'selected' : '' }}>PKR</option>
-                                <option value="USD" {{ old("{$day}_price_quint_currency") == 'USD' ? 'selected' : '' }}>USD</option>
-                            </select>
-                        </div>
-                        @error("{$day}_price_quint")
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
+
 </div>
 
 
@@ -169,9 +111,7 @@
             <label class="form-label" for="room_price_triple">Triple Room Price <b class="text-danger">*</b></label>
             <div class="input-group">
                 <input type="number" step="0.01" class="form-control @error('room_price_triple') is-invalid state-invalid @enderror" name="room_price_triple" id="room_price_triple" placeholder="Enter Triple Room Price..."  value="{{ old('room_price_triple', $hotel->room_price_triple) }}" requiredrequired>
-                <select class="form-control @error('room_price_triple_currency') is-invalid state-invalid @enderror" name="room_price_triple_currency" id="room_price_triple_currency" required>
-                    <option value="PKR" selected>PKR</option>
-                </select>
+
             </div>
             <div id="validationServerRoomPriceTripleFeedback" class="invalid-feedback">This Field is Required.</div>
             @error('room_price_triple')
@@ -179,32 +119,7 @@
             @enderror
         </div>
     </div>
-    <div class="card-body">
-        <div class="form-group">
-            <div class="row">
-                <!-- Triple Room Daily Prices Header -->
-                <div class="col-md-12 mt-3">
-                    <label class="form-label">Triple Room Daily Prices</label>
-                </div>
 
-                <!-- Daily Prices Fields -->
-                @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                    <div class="col-md-2">
-                        <label class="form-label" for="{{ $day }}_price_triple">{{ ucfirst($day) }} Price</label>
-                        <div class="input-group">
-                            <input type="number" step="0.01" class="form-control @error("{$day}_price_triple") is-invalid state-invalid @enderror" name="{{ $day }}_price_triple" id="{{ $day }}_price_triple" placeholder="Enter {{ ucfirst($day) }} Price..."  value="{{ old("{$day}_price_triple", $hotel->{"{$day}_price_triple"}) }}">
-                            <select class="form-control @error("{$day}_price_triple_currency") is-invalid state-invalid @enderror" name="{{ $day }}_price_triple_currency" id="{{ $day }}_price_triple_currency">
-                                <option value="PKR" selected>PKR</option>
-                            </select>
-                        </div>
-                        @error("{$day}_price_triple")
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="card">
@@ -213,9 +128,6 @@
             <label class="form-label" for="room_price_quad">Quad Room Price <b class="text-danger">*</b></label>
             <div class="input-group">
                 <input type="number" step="0.01" class="form-control @error('room_price_quad') is-invalid state-invalid @enderror" name="room_price_quad" id="room_price_quad" placeholder="Enter Quad Room Price..."  value="{{ old('room_price_quad', $hotel->room_price_quad) }}" required required>
-                <select class="form-control @error('room_price_quad_currency') is-invalid state-invalid @enderror" name="room_price_quad_currency" id="room_price_quad_currency" required>
-                    <option value="PKR" selected>PKR</option>
-                </select>
             </div>
             <div id="validationServerRoomPriceQuadFeedback" class="invalid-feedback">This Field is Required.</div>
             @error('room_price_quad')
@@ -223,30 +135,7 @@
             @enderror
         </div>
     </div>
-    <div class="card-body">
-        <div class="form-group">
-            <div class="row">
-                <!-- Quad Room Weekly Prices Header -->
-                <div class="col-md-12">
-                    <label class="form-label">Quad Room Weekly Prices</label>
-                </div>
-                @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                    <div class="col-md-2">
-                        <label class="form-label" for="{{ $day }}_price_quad">{{ ucfirst($day) }} Price</label>
-                        <div class="input-group">
-                            <input type="number" step="0.01" class="form-control @error("{$day}_price_quad") is-invalid state-invalid @enderror" name="{{ $day }}_price_quad" id="{{ $day }}_price_quad" placeholder="Enter {{ ucfirst($day) }} Price..." value="{{ old("{$day}_price_quad", $hotel->{"{$day}_price_quad"}) }}">
-                            <select class="form-control @error("{$day}_price_quad_currency") is-invalid state-invalid @enderror" name="{{ $day }}_price_quad_currency" id="{{ $day }}_price_quad_currency">
-                                <option value="PKR" selected>PKR</option>
-                            </select>
-                        </div>
-                        @error("{$day}_price_quad")
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
+
 </div>
 
 
@@ -257,9 +146,7 @@
             <label class="form-label" for="room_price_double">Double Room Price <b class="text-danger">*</b></label>
             <div class="input-group">
                 <input type="number" step="0.01" class="form-control @error('room_price_double') is-invalid state-invalid @enderror" name="room_price_double" id="room_price_double" placeholder="Enter Double Room Price..." value="{{ old('room_price_double', $hotel->room_price_double) }}" required>
-                <select class="form-control @error('room_price_double_currency') is-invalid state-invalid @enderror" name="room_price_double_currency" id="room_price_double_currency" required>
-                    <option value="PKR" {{ old('room_price_double_currency', $hotel->room_price_double_currency) == 'PKR' ? 'selected' : '' }}>PKR</option>
-                </select>
+        
             </div>
             <div id="validationServerRoomPriceDoubleFeedback" class="invalid-feedback">This Field is Required.</div>
             @error('room_price_double')
@@ -267,29 +154,7 @@
             @enderror
         </div>
     </div>
-    <div class="card-body">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-12">
-                    <label class="form-label">Double Room Weekly Prices</label>
-                </div>
-                @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                    <div class="col-md-2">
-                        <label class="form-label" for="{{ $day }}_price_double">{{ ucfirst($day) }} Price</label>
-                        <div class="input-group">
-                            <input type="number" step="0.01" class="form-control @error("{$day}_price_double") is-invalid state-invalid @enderror" name="{{ $day }}_price_double" id="{{ $day }}_price_double" placeholder="Enter {{ ucfirst($day) }} Price..." value="{{ old("{$day}_price_double", $hotel->{"{$day}_price_double"}) }}">
-                            <select class="form-control @error("{$day}_price_double_currency") is-invalid state-invalid @enderror" name="{{ $day }}_price_double_currency" id="{{ $day }}_price_double_currency">
-                                <option value="PKR" {{ old("{$day}_price_double_currency", $hotel->{"{$day}_price_double_currency"}) == 'PKR' ? 'selected' : '' }}>PKR</option>
-                            </select>
-                        </div>
-                        @error("{$day}_price_double")
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
+
 </div>
 
 

@@ -86,7 +86,7 @@ class UserAuthController extends Controller
     {
         $hotel = Hotel::with('images')
                       ->where('id', $request->id)
-                      ->first(); 
+                      ->first();
 
         if (!$hotel) {
             return response()->json([
@@ -95,8 +95,13 @@ class UserAuthController extends Controller
             ], 404);
         }
 
-        $roomTypes = ['sharing', 'quad', 'quint', 'triple', 'double'];
-        $dailyPrices = [];
+        $dailyPrices = [
+            'sharing' => $hotel->room_price_sharing,
+            'quint' => $hotel->room_price_quint,
+            'triple' => $hotel->room_price_triple,
+            'quad' => $hotel->room_price_quad,
+            'double' => $hotel->room_price_double
+        ];
 
         return response()->json([
             'success' => true,
