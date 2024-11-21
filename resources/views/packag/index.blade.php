@@ -41,16 +41,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{-- @foreach($hotels as $hotel)
+                @foreach($packages as $package)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ ucwords($hotel->hotel_name) }}</td>
-                        <td>{{ $hotel->hotel_city }}</td>
-                        <td>{{ ucwords($hotel->hotel_room_details) }}</td>
-                        <td>{{ ucwords($hotel->hotel_distance) }}</td>
+                        <td>{{ ucwords($package->package_name) }}</td>
                         <td>
 
-                                <a href="{{ route('hotel.edit',['id'=>$hotel->id]) }}" class="btn btn-sm btn-light-warning font-weight-bold mr-2" data-toggle="tooltip" title="Edit User"><i class="fa fa-pen fa-1x"></i> </a>
+                                <a href="#" class="btn btn-sm btn-light-warning font-weight-bold mr-2" data-toggle="tooltip" title="Edit User"><i class="fa fa-pen fa-1x"></i> </a>
 
                             @can('delete user')
                                 <span data-toggle="modal" data-target="#exampleModal">
@@ -59,7 +56,7 @@
                             @endcan
                         </td>
                     </tr>
-                @endforeach --}}
+                @endforeach
                 </tbody>
             </table>
             <!--end: Datatable-->

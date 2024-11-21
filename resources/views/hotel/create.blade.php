@@ -22,8 +22,7 @@
         <form method="post" action="{{ route('hotel.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="card-body">
-                <!-- Include Form -->
-                @include('hotel._form')
+               @include('hotel._form');
             </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-light-success font-weight-bold mr-2 mb-5" style="float: right;">

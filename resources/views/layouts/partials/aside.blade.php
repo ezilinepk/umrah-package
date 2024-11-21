@@ -142,7 +142,7 @@
                         <span class="svg-icon menu-icon">
                             <i class="fa fa-house"></i> <!-- Use 'fa-house' for the house icon -->
                         </span>
-                        <h2 class="menu-text">Add Packages</h2>
+                        <h2 class="menu-text">Add Hotels</h2>
                     </a>
                 </li>
 

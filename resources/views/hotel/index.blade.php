@@ -35,7 +35,6 @@
                     <th>ID</th>
                     <th>Hotel Name</th>
                     <th>City</th>
-                    <th>Hotel Room details</th>
                     <th>Hotel distance</th>
                     <th>Action</th>
                 </tr>
@@ -46,7 +45,6 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ ucwords($hotel->hotel_name) }}</td>
                         <td>{{ $hotel->hotel_city }}</td>
-                        <td>{{ ucwords($hotel->hotel_room_details) }}</td>
                         <td>{{ ucwords($hotel->hotel_distance) }}</td>
                         <td>
 

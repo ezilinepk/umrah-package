@@ -9,7 +9,9 @@ class PackagesController extends Controller
 {
     public function index()
     {
-        return view('packag.index');
+        $packages = HotelPackage::get();
+        // dd($packages);
+        return view('packag.index' , compact('packages'));
     }
 
     public function create()
@@ -19,18 +21,17 @@ class PackagesController extends Controller
 
     public function store(Request $request)
     {
-
+        // dd($request->all());
         $request->validate([
             'package_name' => 'required|string|max:255',
-
         ]);
 
-
-        HotelPackage::create([
+        $package = HotelPackage::create([
             'package_name' => $request->package_name,
-
         ]);
 
-        return redirect()->back()->with('success', 'Hotel package created successfully.');
+        return redirect()->route('hotel.index')->with('success', 'Hotels added successfully.');
+
     }
+
 }

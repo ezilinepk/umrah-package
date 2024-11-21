@@ -91,6 +91,22 @@
             z-index: 1;
         }
 
+        #hotelPricesTableContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#hotelPricesTable {
+    width: 80%;
+}
+
+.table-with-margin {
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+
+
         .bg-img>* {
             position: relative;
             z-index: 2;
@@ -414,10 +430,19 @@ padding: 1.1em 2.7em;
     </div>
 </div>
 
-    <div class="hotelDetails" id="hotelDetailsSection" style="display: none;">
-        <div class="container" style="max-width: 2000px">
- </div>
-         </div>
+<div class="hotelDetails" id="hotelDetailsSection" style="display: none;">
+    <div class="container" style="max-width: 4000px">
+        <!-- Additional content here -->
+    </div>
+</div>
+
+{{-- <div id="hotelPricesContainer"></div> --}}
+
+
+
+
+
+
 
 
 
@@ -449,7 +474,7 @@ padding: 1.1em 2.7em;
     }
 
 
-        $.ajax({
+    $.ajax({
     url: '{{ route('getRoomPrices') }}',
     type: 'GET',
     data: {
@@ -462,23 +487,23 @@ padding: 1.1em 2.7em;
         if (response.success) {
             console.log(response);
 
-            var prices = response.prices;
-            var dateRange = response.date_range;
-            var numDays = response.num_days;
-            var hotelStars = response.hotel_stars;
-            var hoteldistance = response.hotel_distance;
-            var visaPrice = response.visa_price || 0;
-            var visaPriceWithTransport = response.visa_price_with_transport || 0;
+            let prices = response.prices;
+            let dateRange = response.date_range;
+            let numDays = response.num_days;
+            let hotelStars = response.hotel_stars;
+            let hoteldistance = response.hotel_distance;
+            let visaPrice = response.visa_price || 0;
+            let visaPriceWithTransport = response.visa_price_with_transport || 0;
 
+            displayHotelPrices(prices, numDays);
             $('#nights').val(numDays);
             $('#hotelDetailsSection').show();
-
-            var groupedHotels = prices.reduce(function(groups, hotel) {
-                var packageName = hotel.package_name || 'No Package';
+            let groupedHotels = prices.reduce(function(groups, hotel) {
+                let packageName = hotel.package_name || 'No Package';
                 if (!groups[packageName]) {
                     groups[packageName] = { makkah: [], madina: [] };
                 }
-                var city = hotel.hotel_city.toLowerCase();
+                let city = hotel.hotel_city.toLowerCase();
                 if (city === 'makkah') {
                     groups[packageName].makkah.push(hotel);
                 } else if (city === 'madina') {
@@ -486,174 +511,45 @@ padding: 1.1em 2.7em;
                 }
                 return groups;
             }, {});
-            Object.keys(groupedHotels).forEach(function(packageName) {
-    var packageHotels = groupedHotels[packageName];
 
-    var packageSectionHtml = `
-        <div class="card package-details">
-            <div class="card-header">
-                <h3>Package: ${packageName}</h3>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="hotel-name" style="margin-left: 5px;">Makkah Hotels</h4>
-                        <div id="makkah-hotels-${packageName}"></div>
+            Object.keys(groupedHotels).forEach(function(packageName) {
+                let packageHotels = groupedHotels[packageName];
+
+                let packageSectionHtml = `
+                <div class="card package-details">
+                    <div class="card-header">
+                        <h3>Package: ${packageName}</h3>
                     </div>
-                    <div class="col-md-6">
-                        <h4 class="hotel-name">Madina Hotels</h4>
-                        <div id="madina-hotels-${packageName}"></div>
+                    <div class="form-group">
+                        <div class="row">
+                            <!-- Makkah Hotels Section (Left) -->
+                            <div class="col-md-4">
+                                <h4 class="hotel-name" style="margin-left: 5px;">Makkah Hotels</h4>
+                                <div id="makkah-hotels-${packageName}"></div>
+                            </div>
+
+                                <div class="col-md-4">
+                                <h4 class="hotel-name">Room Types</h4>
+                                <div id="hotelPricesContainer" class="hotel-prices-container"></div>
+                            </div>
+
+                            <!-- Madina Hotels Section (Right) -->
+                            <div class="col-md-4">
+                                <h4 class="hotel-name">Madina Hotels</h4>
+                                <div id="madina-hotels-${packageName}"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    `;
+            `;
 
-    if ($(`#package-${packageName}`).length === 0) {
-        $('#hotelDetailsSection .container').append(packageSectionHtml);
-    }
-                packageHotels.makkah.forEach(function(hotel, index) {
-                    var hotelName = hotel.hotel_name;
-                    var roomPrices = hotel.prices;
-                    var hotelPicture = hotel.picture || '';
-                    var hotelStars = hotel.hotel_stars || 'N/A';
-                    var hoteldistance = hotel.hotel_distance;
 
-                    var hotelDetailsHtml = `
-                        <div class="card booking-card">
-                            <div class="row no-gutters">
-                                <div class="col-md-4">
-                                    <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${hotelName} (${hotel.hotel_city})</h5>
-                                        <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
-                                        <p class="card-text"><strong>Date: ${dateRange}</strong></p>
-                                         <p class="card-text"><strong>Distance From Haram pak: ${hoteldistance }K.m</strong></p>
+                if ($(`#package-${packageName}`).length === 0) {
+                    $('#hotelDetailsSection .container').append(packageSectionHtml);
+                }
 
-                                        <p class="card-text">Number of Nights: ${numDays}</p>
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                 <th>Double</th>
-                                                   <th>Triple</th>
-                                                        <th>Quad</th>
-                                                    <th>Quint</th>
-                                                    <th>Sharing</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody id="room-prices-${packageName}-${index}">
-
-                                                <tr id="room-price-row-${packageName}-${index}">
-                                                    <td id="price-double-${packageName}-${index}"></td>
-                                                    <td id="price-triple-${packageName}-${index}"></td>
-                                                     <td id="price-quad-${packageName}-${index}"></td>
-                                                    <td id="price-quint-${packageName}-${index}"></td>
-                                                  <td id="price-sharing-${packageName}-${index}"></td>
-
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" >View details</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    $(`#makkah-hotels-${packageName}`).append(hotelDetailsHtml);
-
-                    // Populate room prices
-                    roomPrices.forEach(function(room) {
-                        var roomType = room.room_type.toLowerCase();
-                        var pricePerPerson = room.price_per_person || 0;
-
-                        if (roomType.includes('sharing')) {
-                            $(`#price-sharing-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('quint')) {
-                            $(`#price-quint-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('triple')) {
-                            $(`#price-triple-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('quad')) {
-                            $(`#price-quad-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('double')) {
-                            $(`#price-double-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        }
-                    });
-                });
-
-                packageHotels.madina.forEach(function(hotel, index) {
-                    var hotelName = hotel.hotel_name;
-                    var hotelStars = hotel.hotel_stars || 'N/A';
-                    var roomPrices = hotel.prices;
-                    var hotelPicture = hotel.picture || '';
-                    var hotelStars = hotel.hotel_stars || 'N/A';
-                    var hoteldistance = hotel.hotel_distance;
-
-                    var hotelDetailsHtml = `
-                        <div class="card booking-card">
-                            <div class="row no-gutters">
-                                <div class="col-md-4">
-                                    <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${hotelName} (${hotel.hotel_city})</h5>
-                                        <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
-                                         <p class="card-text"><strong>Distance from Hotel to madina pak: ${hoteldistance }K.m</strong></p>
-                                        <p class="card-text"><strong>Date: ${dateRange}</strong></p>
-                                        <p class="card-text">Number of Nights: ${numDays}</p>
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                 <th>Double</th>
-                                                   <th>Triple</th>
-                                                        <th>Quad</th>
-                                                    <th>Quint</th>
-                                                    <th>Sharing</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody id="room-prices-${packageName}-${index}">
-
-                                                <tr id="room-price-row-${packageName}-${index}">
-                                                    <td id="price-double-${packageName}-${index}"></td>
-                                                    <td id="price-triple-${packageName}-${index}"></td>
-                                                     <td id="price-quad-${packageName}-${index}"></td>
-                                                    <td id="price-quint-${packageName}-${index}"></td>
-                                                  <td id="price-sharing-${packageName}-${index}"></td>
-
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" style="margin-top: 37px;">View details</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    $(`#madina-hotels-${packageName}`).append(hotelDetailsHtml);
-
-                    roomPrices.forEach(function(room) {
-                        var roomType = room.room_type.toLowerCase();
-                        var pricePerPerson = room.price_per_person || 0;
-
-                        if (roomType.includes('sharing')) {
-                            $(`#price-sharing-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('quint')) {
-                            $(`#price-quint-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('triple')) {
-                            $(`#price-triple-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('quad')) {
-                            $(`#price-quad-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        } else if (roomType.includes('double')) {
-                            $(`#price-double-${packageName}-${index}`).text(`SAR${pricePerPerson}`);
-                        }
-                    });
-                });
+                addHotelsToSection(packageHotels, 'makkah', packageName, dateRange, numDays, hotelStars, hoteldistance);
+                addHotelsToSection(packageHotels, 'madina', packageName, dateRange, numDays, hotelStars, hoteldistance);
             });
         } else {
             console.error('Error fetching room prices:', response.message);
@@ -664,6 +560,36 @@ padding: 1.1em 2.7em;
     }
 });
 
+function addHotelsToSection(hotels, location, packageName, dateRange, numDays, hotelStars, hoteldistance) {
+    hotels[location].forEach(hotel => {
+        let hotelName = hotel.hotel_name;
+        let hotelPicture = hotel.picture || '';
+
+        let hotelDetailsHtml = `
+            <div class="booking-card">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="">
+                            <h5 class="card-title">${hotelName} (${hotel.hotel_city})</h5>
+                            <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
+                            <p class="card-text"><strong>Date: ${dateRange}</strong></p>
+                            <p class="card-text"><strong>Distance: ${hoteldistance}K.m</strong></p>
+                            <p class="card-text">Number of Nights: ${numDays}</p>
+                            <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now">View details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        $(`#${location}-hotels-${packageName}`).append(hotelDetailsHtml);
+    });
+}
+
+
 
         }
 
@@ -673,11 +599,316 @@ padding: 1.1em 2.7em;
     });
 });
 
+$('#calculateubl').on('click', function() {
+    totalPricesByLocation = { makkah: [], madina: [] };
+    responseBatch = [];
+    $('#hotelPricesContainer').empty(); // Clear the displayed table
+    $('#hotelDetailsSection .container').empty();
+    $('#additionalRowsContainer .form-row').each(function() {
+        let formRow = $(this);
+        let hotelId = formRow.find('.location').val();
+        let dateRange = formRow.find('.dateRange').val();
+        let uniqueSuffix = formRow.attr('id').split('-')[1];
+        let totalperson = $('#numberofperson').val();
+
+        if (hotelId && dateRange) {
+            $.ajax({
+                url: '{{ route('getRoomPrices') }}',
+                type: 'GET',
+                data: {
+                    hotel_city: hotelId,
+                    dateRange: dateRange,
+                    totalperson: totalperson,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        console.log(response);
+
+                        let prices = response.prices;
+                        let dateRange = response.date_range;
+                        let numDays = response.num_days;
+                        displayHotelPrices(prices, numDays);
+
+                        let groupedHotels = groupHotelsByPackageAndCity(prices);
+
+                        displayHotelsByPackage(groupedHotels, dateRange, numDays);
+                    } else {
+                        console.error('Error fetching room prices:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        }
+    });
+});
+
+function groupHotelsByPackageAndCity(prices) {
+    return prices.reduce((groups, hotel) => {
+        let packageName = hotel.package_name || 'No Package';
+        let city = hotel.hotel_city.toLowerCase();
+
+        if (!groups[packageName]) {
+            groups[packageName] = { makkah: [], madina: [] };
+        }
+        if (city === 'makkah') {
+            groups[packageName].makkah.push(hotel);
+        } else if (city === 'madina') {
+            groups[packageName].madina.push(hotel);
+        }
+
+        return groups;
+    }, {});
+}
+
+function displayHotelsByPackage(groupedHotels, dateRange, numDays) {
+    Object.keys(groupedHotels).forEach((packageName) => {
+        let packageHotels = groupedHotels[packageName];
+
+        // Create package section only if it doesn't exist
+        if ($(`#package-${packageName}`).length === 0) {
+            let packageSectionHtml = `
+                <div class="card package-details" id="package-${packageName}">
+                    <div class="card-header">
+                        <h3>Package: ${packageName}</h3>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h4>Makkah Hotels</h4>
+                                <div id="makkah-hotels-${packageName}"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <h4>Room Types</h4>
+                                <div id="hotelPricesContainer-${packageName}" class="hotel-prices-container"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <h4>Madina Hotels</h4>
+                                <div id="madina-hotels-${packageName}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('#hotelDetailsSection .container').append(packageSectionHtml);
+        }
+
+        // Append Makkah and Madina hotels to their respective sections
+        addHotelsToSection(packageHotels, 'makkah', packageName, dateRange, numDays);
+        addHotelsToSection(packageHotels, 'madina', packageName, dateRange, numDays);
+    });
+}
+
+
+function addHotelsToSection(hotels, location, packageName, dateRange, numDays) {
+    hotels[location].forEach((hotel, index) => {
+        let hotelName = hotel.hotel_name;
+        let hotelStars = hotel.hotel_stars || 'N/A';
+        let hotelPicture = hotel.picture || '';
+        let hoteldistance = hotel.hotel_distance || 'N/A';
+
+        let hotelDetailsHtml = `
+            <div class="booking-card">
+                <div class="row no-gutters">
+                    <div class="col-md-3">
+                        <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <h5 class="card-title">${hotelName} (${location.charAt(0).toUpperCase() + location.slice(1)})</h5>
+                            <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
+                            <p class="card-text"><strong>Date: ${dateRange}</strong></p>
+                            <p class="card-text"><strong>Distance: ${hoteldistance} km</strong></p>
+                            <p class="card-text">Number of Nights: ${numDays}</p>
+                            <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now">View details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (location === 'madina' ) {
+            let hotelPricesTableHtml = `
+
+            `;
+            $(`#${location}-hotels-${packageName}`).append(hotelPricesTableHtml);
+        }
+
+        $(`#${location}-hotels-${packageName}`).append(hotelDetailsHtml);
+    });
+}
+
+
+
+
+
+
+
+
+totalPricesByLocation = { makkah: [], madina: [] };
+ responseBatch = [];
+ function displayHotelPrices(responseData, numDays) {
+    console.log('Received data:', responseData);
+    console.log('Number of nights:', numDays);
+    responseBatch.push(responseData);
+    if (responseBatch.length === 1) {
+        processLocationData(responseData, numDays, 'makkah');
+    } else if (responseBatch.length === 2) {
+        processLocationData(responseData, numDays, 'madina');
+        combineMakkahAndMadinaPrices();
+        updatePriceTable();
+        responseBatch = [];
+    }
+}
+
+function processLocationData(responseData, numDays, location) {
+    if (Array.isArray(responseData)) {
+        responseData.forEach(hotel => {
+            const hotelData = {
+                hotel_name: hotel.hotel_name,
+                package_name: hotel.package_name || "Unspecified Package",
+                prices: {}
+            };
+
+            if (hotel.prices) {
+                hotel.prices.forEach(priceData => {
+                    const roomType = priceData.room_type;
+                    const price = parseFloat(priceData.total_price_for_persons || 0) * numDays;
+                    hotelData.prices[roomType] = (hotelData.prices[roomType] || 0) + price;
+                });
+            }
+
+            if (location === 'makkah') {
+                totalPricesByLocation.makkah.push(hotelData);
+            } else if (location === 'madina') {
+                totalPricesByLocation.madina.push(hotelData);
+            }
+        });
+    }
+}
+
+function combineMakkahAndMadinaPrices() {
+    const combinedHotels = [];
+    const roomTypes = ['Double', 'Triple', 'Quad', 'Quint', 'Sharing'];
+
+    const hasMakkahHotels = totalPricesByLocation.makkah.length > 0;
+    const hasMadinaHotels = totalPricesByLocation.madina.length > 0;
+
+    // If only Makkah hotels exist
+    if (hasMakkahHotels && !hasMadinaHotels) {
+        totalPricesByLocation.combined = totalPricesByLocation.makkah;
+        return;
+    }
+
+    // If only Madina hotels exist
+    if (hasMadinaHotels && !hasMakkahHotels) {
+        totalPricesByLocation.combined = totalPricesByLocation.madina;
+        return;
+    }
+
+    // Combine Makkah and Madina hotels if both exist
+    const maxHotels = Math.max(totalPricesByLocation.makkah.length, totalPricesByLocation.madina.length);
+
+    for (let i = 0; i < maxHotels; i++) {
+        const makkahHotel = totalPricesByLocation.makkah[i] || null;
+        const madinaHotel = totalPricesByLocation.madina[i] || null;
+
+        const combinedHotel = {
+            hotel_name: "",
+            package_name: "",
+            prices: {}
+        };
+
+        // Combine hotel names and package names
+        if (makkahHotel) {
+            combinedHotel.hotel_name += makkahHotel.hotel_name;
+            combinedHotel.package_name = makkahHotel.package_name || combinedHotel.package_name;
+        }
+
+        if (madinaHotel) {
+            if (combinedHotel.hotel_name) {
+                combinedHotel.hotel_name += " & ";
+            }
+            combinedHotel.hotel_name += madinaHotel.hotel_name;
+            combinedHotel.package_name = madinaHotel.package_name || combinedHotel.package_name;
+        }
+
+        // Combine room prices
+        roomTypes.forEach(roomType => {
+            const makkahPrice = makkahHotel?.prices[roomType] || 0;
+            const madinaPrice = madinaHotel?.prices[roomType] || 0;
+            combinedHotel.prices[roomType] = makkahPrice + madinaPrice;
+        });
+
+        combinedHotels.push(combinedHotel);
+    }
+
+    totalPricesByLocation.combined = combinedHotels;
+}
+
+
+function updatePriceTable() {
+    const tableContainer = $('#hotelPricesContainer .tablecontainer');
+    const roomTypes = ['Double', 'Triple', 'Quad', 'Quint', 'Sharing'];
+
+    tableContainer.empty();
+
+    if (totalPricesByLocation.combined) {
+        totalPricesByLocation.combined.forEach(hotel => {
+            const packageName = hotel.package_name || "Unspecified Package";
+            const priceContainer = $(`#hotelPricesContainer-${packageName}`);
+
+            const table = $('<table></table>')
+                .addClass('table table-bordered')
+                .css('margin-top', '70px');
+            const tableHeader = $('<thead></thead>').appendTo(table);
+            const tableBody = $('<tbody></tbody>').appendTo(table);
+
+            // Add header row
+            const headerRow = $('<tr></tr>');
+            headerRow.append('<th>Hotel</th>');
+            roomTypes.forEach(roomType => {
+                headerRow.append(`<th>${roomType}</th>`);
+            });
+            headerRow.append('<th>Total Price</th>');
+            tableHeader.append(headerRow);
+
+            // Add hotel data to the table
+            const totalRow = $('<tr></tr>');
+            let totalPrice = 0;
+
+            totalRow.append(`<td>${hotel.hotel_name}</td>`);
+
+            roomTypes.forEach(roomType => {
+                const roomPrice = hotel.prices[roomType] || 0;
+                totalRow.append(`<td>SAR ${roomPrice.toFixed(2)}</td>`);
+                totalPrice += roomPrice;
+            });
+
+            totalRow.append(`<td>SAR ${totalPrice.toFixed(2)}</td>`);
+            tableBody.append(totalRow);
+
+            priceContainer.append(table);
+        });
+    }
+}
+
+
+
+
+
+
+
+
+
+
 function updateEstimatedTotalPrice(totalPrices) {
-    var currentTotal = parseFloat($('#estimateTotalPrice').val()) || 0;
-    for (var hotelId in totalPrices) {
+    let currentTotal = parseFloat($('#estimateTotalPrice').val()) || 0;
+    for (let hotelId in totalPrices) {
         if (totalPrices.hasOwnProperty(hotelId)) {
-            var price = parseFloat(totalPrices[hotelId].replace(/,/g, '')) || 0;
+            let price = parseFloat(totalPrices[hotelId].replace(/,/g, '')) || 0;
             currentTotal += price;
         }
     }
@@ -685,6 +916,7 @@ function updateEstimatedTotalPrice(totalPrices) {
     $('#estimateTotalPrice').val(currentTotal.toFixed(2));
     $('#estimateTotalPriceContainer').hide();
 }
+
 
 $('#calculateubl').on('click', function() {
         $('#estimateTotalPriceContainer').show();
@@ -821,235 +1053,10 @@ function removeSelectedDateRange(dateRange) {
 }
 
 });
-$('#calculateubl').on('click', function() {
-    $('#hotelDetailsSection .container').empty();
-    $('#additionalRowsContainer .form-row').each(function() {
-        var formRow = $(this);
-        var hotelId = formRow.find('.location').val();
-        var dateRange = formRow.find('.dateRange').val();
-        var uniqueSuffix = formRow.attr('id').split('-')[1];
-        var totalperson = $('#numberofperson').val()
-
-        if (hotelId && dateRange) {
-            $.ajax({
-                url: '{{ route('getRoomPrices') }}',
-                type: 'GET',
-                data: {
-                    hotel_city: hotelId,
-                    dateRange: dateRange,
-                    totalperson: totalperson,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        console.log(response);
-
-                        var prices = response.prices;
-                        var dateRange = response.date_range;
-                        var numDays = response.num_days;
-                        var hoteldistance = response.hotel_distance;
-                        var hotelStars = response.hotel_stars;
 
 
 
-                        $(`#nights-${uniqueSuffix}`).val(numDays);
-                        $('#hotelDetailsSection').show();
 
-                        var groupedHotels = prices.reduce(function(groups, hotel) {
-                            var packageName = hotel.package_name || 'No Package';
-                            var city = hotel.hotel_city.toLowerCase();
-
-                            if (!groups[packageName]) {
-                                groups[packageName] = { makkah: [], madina: [] };
-                            }
-
-                            if (city === 'makkah') {
-                                groups[packageName].makkah.push(hotel);
-                            } else if (city === 'madina') {
-                                groups[packageName].madina.push(hotel);
-                            }
-
-                            return groups;
-                        }, {});
-
-                        Object.keys(groupedHotels).forEach(function(packageName) {
-                            var packageHotels = groupedHotels[packageName];
-                            var $packageSection = $(`#package-${packageName}`);
-
-                            if ($packageSection.length === 0) {
-                                var packageSectionHtml = `
-                                    <div class="card package-details" id="package-${packageName}">
-                                        <div class="card-header">
-                                            <h3>Package: ${packageName}</h3>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                  <h4 class="hotel-name">Makkah Hotels</h4>
-                                                    <div id="makkah-hotels-${packageName}"></div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                 <h4 class="hotel-name">Madina Hotels</h4>
-                                                    <div id="madina-hotels-${packageName}"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                                $('#hotelDetailsSection .container').append(packageSectionHtml);
-                            }
-
-                            packageHotels.makkah.forEach(function(hotel) {
-                                var hotelName = hotel.hotel_name;
-                                var hotelStars = hotel.hotel_star || 'N/A';
-                                var roomPrices = hotel.prices;
-                                var hotelPicture = hotel.picture || '';
-                                var hoteldistance = hotel.hotel_distance;
-
-
-                                var hotelDetailsHtml = `
-    <div class="card booking-card">
-        <div class="row no-gutters">
-            <div class="col-md-3">
-                <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
-            </div>
-            <div class="col-md-9">
-                <div class="card-body">
-                    <h5 class="card-title">${hotelName} (Makkah)</h5>
-                    <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
-                    <p class="card-text"><strong>Date: ${dateRange}</strong></p>
-                    <p class="card-text"><strong>Distance from Hotel to Haram pak: ${hoteldistance} K.m</strong></p>
-                    <p class="card-text">Number of Nights: ${numDays}</p>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Double</th>
-                                <th>Triple</th>
-                                <th>Quad</th>
-                                <th>Quint</th>
-                                <th>Sharing</th>
-                            </tr>
-                        </thead>
-                        <tbody class="room-prices-${packageName}">
-                            <tr>
-                                <td class="price-double-${packageName}"></td>
-                                <td class="price-triple-${packageName}"></td>
-                                <td class="price-quad-${packageName}"></td>
-                                <td class="price-quint-${packageName}"></td>
-                                <td class="price-sharing-${packageName}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <!-- "View details" button moved below the table -->
-                    <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" style="margin-top: 10px;">View details</a>
-                </div>
-            </div>
-        </div>
-    </div>
-`;
-
-                                $(`#makkah-hotels-${packageName}`).append(hotelDetailsHtml);
-
-                                roomPrices.forEach(function(room) {
-                                    var roomType = room.room_type.toLowerCase();
-                                    var pricePerPerson = room.price_per_person || 0;
-
-                                    if (roomType.includes('sharing')) {
-                                        $(`.price-sharing-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('quint')) {
-                                        $(`.price-quint-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('triple')) {
-                                        $(`.price-triple-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('quad')) {
-                                        $(`.price-quad-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('double')) {
-                                        $(`.price-double-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    }
-                                });
-                            });
-
-                            packageHotels.madina.forEach(function(hotel) {
-                                var hotelName = hotel.hotel_name;
-                                var hotelStars = hotel.hotel_stars || 'N/A';
-                                var roomPrices = hotel.prices;
-                                var hotelPicture = hotel.picture || '';
-                                var hoteldistance = hotel.hotel_distance;
-
-
-                                var hotelDetailsHtml = `
-    <div class="card booking-card">
-        <div class="row no-gutters">
-            <div class="col-md-4">
-                <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">${hotelName} (Madina)</h5>
-                    <p class="star-rating text-warning">${'★'.repeat(hotelStars)}</p>
-                    <p class="card-text"><strong>Date: ${dateRange}</strong></p>
-                    <p class="card-text"><strong>Distance from Hotel to Madina pak: ${hoteldistance} K.m</strong></p>
-                    <p class="card-text">Number of Nights: ${numDays}</p>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Double</th>
-                                <th>Triple</th>
-                                <th>Quad</th>
-                                <th>Quint</th>
-                                <th>Sharing</th>
-                            </tr>
-                        </thead>
-                        <tbody class="room-prices-${packageName}">
-                            <tr>
-                                <td class="price-double-${packageName}"></td>
-                                <td class="price-triple-${packageName}"></td>
-                                <td class="price-quad-${packageName}"></td>
-                                <td class="price-quint-${packageName}"></td>
-                                <td class="price-sharing-${packageName}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <!-- "View details" button moved below the table -->
-                    <a href="#" data-hotel-id="${hotel.id}" data-toggle="modal" data-target="#myModal" class="btn btn-outline-primary book-now" style="margin-top: 10px;">View details</a>
-                </div>
-            </div>
-        </div>
-    </div>
-`;
-
-                                $(`#madina-hotels-${packageName}`).append(hotelDetailsHtml);
-
-                                roomPrices.forEach(function(room) {
-                                    var roomType = room.room_type.toLowerCase();
-                                    var pricePerPerson = room.price_per_person || 0;
-
-                                    if (roomType.includes('sharing')) {
-                                        $(`.price-sharing-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('quint')) {
-                                        $(`.price-quint-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('triple')) {
-                                        $(`.price-triple-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('quad')) {
-                                        $(`.price-quad-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    } else if (roomType.includes('double')) {
-                                        $(`.price-double-${packageName}`).text(`SAR${pricePerPerson}`);
-                                    }
-                                });
-                            });
-                        });
-                    } else {
-                        console.error('Error fetching room prices:', response.message);
-                    }
-
-
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
-                }
-            });
-        }
-    });
-});
 
 
 $(document).on('click', '.book-now', function() {

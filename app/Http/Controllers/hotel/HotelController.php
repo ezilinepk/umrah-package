@@ -5,10 +5,11 @@ namespace App\Http\Controllers\hotel;
 use Carbon\Carbon;
 use App\Models\Hotel;
 use App\Models\HotelImage;
+use App\Models\HotelPackage;
 use Illuminate\Http\Request;
+use App\Models\HotelDailyPrice;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
-use App\Models\HotelPackage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,33 +24,29 @@ class HotelController extends Controller
 
     public function create()
     {
-        $packages = HotelPackage::all();
 
-        return view('hotel.create', compact( 'packages'));
+
+        $packages = HotelPackage::get();
+        return view('hotel.create', compact('packages') );
     }
 
     public function store(Request $request)
     {
-
         // dd($request->all());
-          $validatedData = $request->validate([
+        $validatedData = $request->validate([
             'hotel_name.*' => 'required|string|max:255',
             'hotel_city.*' => 'required|string|max:255',
             'hotel_google_map.*' => 'nullable|url',
             'hotel_star.*' => 'required|integer|min:1|max:5',
             'hotel_distance.*' => 'nullable|numeric',
             'hotel_picture.*' => 'nullable|image|mimes:png,jpg,avif,jpeg,webp|max:2048',
-            'room_price_sharing.*' => 'required|numeric',
-            'room_price_quint.*' => 'required|numeric',
-            'room_price_triple.*' => 'required|numeric',
-            'room_price_double.*' => 'required|numeric',
-            'room_price_quad.*' => 'required|numeric',
-            'hotel_images.*.*' => 'image|mimes:jpeg,png,jpg,webp,gif,avif,svg|max:2048',
+            'room_price_sharing.*' => 'required',
+            'room_price_quint.*' => 'required',
+            'room_price_triple.*' => 'required',
+            'room_price_double.*' => 'required',
+            'room_price_quad.*' => 'required',
             'package_name.*' => 'required',
-            'hotel_room_detail.*' => 'required|string|max:255',
-            'hotel_details.*' => 'required',
-            'phone_number.*' => 'required|string',
-            'email.*' => 'required|email',
+            'hotel_images.*.*' => 'image|mimes:jpeg,png,jpg,webp,gif,avif,svg|max:2048',
             'address.*' => 'required|string',
         ]);
 
@@ -57,21 +54,18 @@ class HotelController extends Controller
             foreach ($request->hotel_name as $index => $hotelName) {
                 $hotelData = [
                     'hotel_name' => $hotelName,
-                    'hotel_city' => $request->hotel_city[$index],
+                    'hotel_city' => $request->hotel_city[$index] ?? null,
                     'hotel_google_map' => $request->hotel_google_map[$index] ?? null,
-                    'hotel_star' => $request->hotel_star[$index],
+                    'hotel_star' => $request->hotel_star[$index] ?? 1,
                     'hotel_distance' => $request->hotel_distance[$index] ?? null,
-                    'room_price_sharing' => $request->room_price_sharing[$index],
-                    'room_price_quint' => $request->room_price_quint[$index],
-                    'room_price_triple' => $request->room_price_triple[$index],
-                    'room_price_double' => $request->room_price_double[$index],
-                    'room_price_quad' => $request->room_price_quad[$index],
+                    'room_price_sharing' => json_encode($request->room_price_sharing),
+                    'room_price_quint' => json_encode($request->room_price_quint),
+                    'room_price_triple' => json_encode($request->room_price_triple),
+                    'room_price_double' => json_encode($request->room_price_double),
+                    'room_price_quad' => json_encode($request->room_price_quad),
                     'package_name' => $request->package_name[$index],
-                    'hotel_room_detail' =>  $request->hotel_room_detail[$index],
-                    'hotel_details' =>  $request->hotel_details[$index],
-                    'phone_numbers' => $request->phone_number[$index],
-                    'emails' => $request->email[$index],
-                    'addresses' => $request->address[$index],
+                    'emails' => $request->email[$index] ?? null,
+                    'addresses' => $request->address[$index] ?? '',
                 ];
 
                 $hotel = Hotel::create($hotelData);
@@ -93,12 +87,20 @@ class HotelController extends Controller
                             'hotel_picture' => $image_name,
                         ]);
                     }
+                }
             }
         }
 
-    }
         return redirect()->route('hotel.index')->with('success', 'Hotels added successfully.');
     }
+
+
+
+
+
+
+
+
 
 
     public function edit($id)
@@ -297,8 +299,7 @@ public function getRoomPrices(Request $request)
 {
     $location = $request->input('hotel_city');
     $dateRange = $request->input('dateRange');
-    $totalPerson =  $request->input('totalperson', 1);
-    // dd($totalPerson);
+    $totalPerson = $request->input('totalperson', 1);
     $visaPrice = (float) $request->input('visaPrice', 0);
     $visaPriceWithTransport = (float) $request->input('visaPriceWithTransport', 0);
 
@@ -330,42 +331,31 @@ public function getRoomPrices(Request $request)
 
         foreach ($roomTypes as $roomTypeName => $priceField) {
             if (!is_null($hotel->$priceField)) {
-                $numPersons = 1; // Default to 1 person
+                $numPersons = match (strtolower($roomTypeName)) {
+                    'quad' => 4,
+                    'triple' => 3,
+                    'double' => 2,
+                    'sharing' => 6,
+                    'quint' => 5,
+                    default => 1,
+                };
 
-                switch (strtolower($roomTypeName)) {
-                    case 'quad':
-                        $numPersons = 4;
-                        break;
-                    case 'triple':
-                        $numPersons = 3;
-                        break;
-                    case 'double':
-                        $numPersons = 2;
-                        break;
-                    case 'sharing':
-                        $numPersons = 6;
-                        break;
-                    case 'quint':
-                        $numPersons = 5;
-                        break;
+                $basePrices = json_decode($hotel->$priceField, true); // Parse JSON prices
+                $totalPrice = 0;
+
+                // Get daily prices within the date range
+                for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+                    $day = $date->day; // Get the day of the month (e.g., 21)
+                    $totalPrice += $basePrices[1][$day] ?? 0; // Use 0 if no price is set for that day
                 }
 
-                $baseRoomPrice =  $hotel->$priceField;
-
-                $roomPrice = $baseRoomPrice * $numDays;
-
-                $roomPricePerPerson = $roomPrice / $numPersons * $totalPerson;
-
-
-                if ($totalPerson < 1) {
-                    $totalPerson = 1;
-                }
-
+                // Calculate room price per person and total
+                $roomPricePerPerson = ($totalPrice / $numPersons) * $totalPerson;
                 $hotelPrices[] = [
                     'room_type' => ucfirst($roomTypeName),
                     'price_per_person' => number_format($roomPricePerPerson, 2),
                     'price_per_day' => number_format($roomPricePerPerson / $numDays, 2),
-                    'total_price_for_persons' => number_format($roomPricePerPerson, 2), // Show total price for the persons
+                    'total_price_for_persons' => number_format($roomPricePerPerson, 2),
                 ];
             }
         }
@@ -382,8 +372,6 @@ public function getRoomPrices(Request $request)
         ];
     }
 
-    // Check and ensure that the $totalPerson input is correct
-
     return response()->json([
         'success' => true,
         'hotel_location' => $location,
@@ -394,6 +382,7 @@ public function getRoomPrices(Request $request)
         'prices' => $priceResults
     ]);
 }
+
 
 
 
