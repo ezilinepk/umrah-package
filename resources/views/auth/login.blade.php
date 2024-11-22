@@ -485,6 +485,7 @@ padding: 1.1em 2.7em;
     },
     success: function(response) {
         if (response.success) {
+
             console.log(response);
 
             let prices = response.prices;
@@ -528,9 +529,9 @@ padding: 1.1em 2.7em;
                                 <div id="makkah-hotels-${packageName}"></div>
                             </div>
 
-                                <div class="col-md-4">
+                            <div class="col-md-4">
                                 <h4 class="hotel-name">Room Types</h4>
-                                <div id="hotelPricesContainer" class="hotel-prices-container"></div>
+                                <div id="hotelPricesContainer-${packageName}" class="hotel-prices-container"></div>
                             </div>
 
                             <!-- Madina Hotels Section (Right) -->
@@ -563,13 +564,15 @@ padding: 1.1em 2.7em;
 function addHotelsToSection(hotels, location, packageName, dateRange, numDays, hotelStars, hoteldistance) {
     hotels[location].forEach(hotel => {
         let hotelName = hotel.hotel_name;
+        let hotelStars = hotel.hotel_stars || 'N/A';
         let hotelPicture = hotel.picture || '';
+        let hoteldistance = hotel.hotel_distance || 'N/A';
 
         let hotelDetailsHtml = `
             <div class="booking-card">
                 <div class="row no-gutters">
                     <div class="col-md-4">
-                        <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
+                        <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}" style="width: 257px; height: 257px;">
                     </div>
                     <div class="col-md-8">
                         <div class="">
@@ -595,6 +598,7 @@ function addHotelsToSection(hotels, location, packageName, dateRange, numDays, h
 
 
     $('#calculateubl').click(function() {
+        $('#hotelDetailsSection .container').empty();
         fetchRoomPrices();
     });
 });
@@ -677,15 +681,15 @@ function displayHotelsByPackage(groupedHotels, dateRange, numDays) {
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-4">
-                                <h4>Makkah Hotels</h4>
+                                <h4 class="hotel-name">Makkah Hotels</h4>
                                 <div id="makkah-hotels-${packageName}"></div>
                             </div>
                             <div class="col-md-4">
-                                <h4>Room Types</h4>
+                                <h4 class="hotel-name">Room Types</h4>
                                 <div id="hotelPricesContainer-${packageName}" class="hotel-prices-container"></div>
                             </div>
                             <div class="col-md-4">
-                                <h4>Madina Hotels</h4>
+                                <h4 class="hotel-name">Madina Hotels</h4>
                                 <div id="madina-hotels-${packageName}"></div>
                             </div>
                         </div>
@@ -713,7 +717,7 @@ function addHotelsToSection(hotels, location, packageName, dateRange, numDays) {
             <div class="booking-card">
                 <div class="row no-gutters">
                     <div class="col-md-3">
-                        <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}">
+                        <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}" style="width: 257px; height: 257px;">
                     </div>
                     <div class="col-md-9">
                         <div class="card-body">
@@ -793,67 +797,57 @@ function combineMakkahAndMadinaPrices() {
     const combinedHotels = [];
     const roomTypes = ['Double', 'Triple', 'Quad', 'Quint', 'Sharing'];
 
-    const hasMakkahHotels = totalPricesByLocation.makkah.length > 0;
-    const hasMadinaHotels = totalPricesByLocation.madina.length > 0;
+    // Iterate through Makkah hotels and find matching Madina hotels by package
+    totalPricesByLocation.makkah.forEach(makkahHotel => {
+        let matchedMadinaHotel = null;
 
-    // If only Makkah hotels exist
-    if (hasMakkahHotels && !hasMadinaHotels) {
-        totalPricesByLocation.combined = totalPricesByLocation.makkah;
-        return;
-    }
+        // Find a Madina hotel with the same package name
+        for (const madinaHotel of totalPricesByLocation.madina) {
+            if (madinaHotel.package_name === makkahHotel.package_name) {
+                matchedMadinaHotel = madinaHotel;
+                break;
+            }
+        }
 
-    // If only Madina hotels exist
-    if (hasMadinaHotels && !hasMakkahHotels) {
-        totalPricesByLocation.combined = totalPricesByLocation.madina;
-        return;
-    }
-
-    // Combine Makkah and Madina hotels if both exist
-    const maxHotels = Math.max(totalPricesByLocation.makkah.length, totalPricesByLocation.madina.length);
-
-    for (let i = 0; i < maxHotels; i++) {
-        const makkahHotel = totalPricesByLocation.makkah[i] || null;
-        const madinaHotel = totalPricesByLocation.madina[i] || null;
-
+        // Combine prices if a matching Madina hotel is found
         const combinedHotel = {
-            hotel_name: "",
-            package_name: "",
+            hotel_name: makkahHotel.hotel_name,
+            package_name: makkahHotel.package_name,
             prices: {}
         };
 
-        // Combine hotel names and package names
-        if (makkahHotel) {
-            combinedHotel.hotel_name += makkahHotel.hotel_name;
-            combinedHotel.package_name = makkahHotel.package_name || combinedHotel.package_name;
-        }
-
-        if (madinaHotel) {
-            if (combinedHotel.hotel_name) {
-                combinedHotel.hotel_name += " & ";
-            }
-            combinedHotel.hotel_name += madinaHotel.hotel_name;
-            combinedHotel.package_name = madinaHotel.package_name || combinedHotel.package_name;
+        if (matchedMadinaHotel) {
+            combinedHotel.hotel_name += ` & ${matchedMadinaHotel.hotel_name}`;
         }
 
         // Combine room prices
         roomTypes.forEach(roomType => {
-            const makkahPrice = makkahHotel?.prices[roomType] || 0;
-            const madinaPrice = madinaHotel?.prices[roomType] || 0;
+            const makkahPrice = makkahHotel.prices[roomType] || 0;
+            const madinaPrice = matchedMadinaHotel?.prices[roomType] || 0;
             combinedHotel.prices[roomType] = makkahPrice + madinaPrice;
         });
 
         combinedHotels.push(combinedHotel);
-    }
+    });
+
+    // Add any unmatched Madina hotels (optional: if needed separately)
+    const unmatchedMadinaHotels = totalPricesByLocation.madina.filter(madinaHotel =>
+        !combinedHotels.some(hotel => hotel.package_name === madinaHotel.package_name)
+    );
+    unmatchedMadinaHotels.forEach(madinaHotel => {
+        combinedHotels.push(madinaHotel);
+    });
 
     totalPricesByLocation.combined = combinedHotels;
 }
 
 
 function updatePriceTable() {
-    const tableContainer = $('#hotelPricesContainer .tablecontainer');
+    const tableContainer = $('#hotelPricesContainer .tablecontainer').empty();
     const roomTypes = ['Double', 'Triple', 'Quad', 'Quint', 'Sharing'];
 
     tableContainer.empty();
+    // tableContainer.empty();
 
     if (totalPricesByLocation.combined) {
         totalPricesByLocation.combined.forEach(hotel => {
@@ -862,13 +856,20 @@ function updatePriceTable() {
 
             const table = $('<table></table>')
                 .addClass('table table-bordered')
-                .css('margin-top', '70px');
-            const tableHeader = $('<thead></thead>').appendTo(table);
+                .css({
+                    'margin-top': '70px',
+                    'box-shadow': '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    'border-radius': '8px',
+                    'overflow': 'hidden'
+                });
+
+            const tableHeader = $('<thead></thead>')
+                .css('background-color', 'rgba(0, 123, 255, 0.1)') // Light blue with transparency
+                .appendTo(table);
             const tableBody = $('<tbody></tbody>').appendTo(table);
 
             // Add header row
             const headerRow = $('<tr></tr>');
-            headerRow.append('<th>Hotel</th>');
             roomTypes.forEach(roomType => {
                 headerRow.append(`<th>${roomType}</th>`);
             });
@@ -878,8 +879,6 @@ function updatePriceTable() {
             // Add hotel data to the table
             const totalRow = $('<tr></tr>');
             let totalPrice = 0;
-
-            totalRow.append(`<td>${hotel.hotel_name}</td>`);
 
             roomTypes.forEach(roomType => {
                 const roomPrice = hotel.prices[roomType] || 0;
