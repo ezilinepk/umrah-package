@@ -297,6 +297,8 @@ class HotelController extends Controller
 
 public function getRoomPrices(Request $request)
 {
+    // dd($request->all()); // Check the request data
+
     $location = $request->input('hotel_city');
     $dateRange = $request->input('dateRange');
     $totalPerson = $request->input('totalperson', 1);
@@ -315,7 +317,10 @@ public function getRoomPrices(Request $request)
     $endDate = \Carbon\Carbon::parse($endDate);
     $numDays = $startDate->diffInDays($endDate) + 1;
 
+    // Main hotel search
     $hotels = Hotel::where('hotel_city', $location)->get();
+
+    // Room types mapping
     $roomTypes = [
         'sharing' => 'room_price_sharing',
         'quint' => 'room_price_quint',
@@ -326,6 +331,7 @@ public function getRoomPrices(Request $request)
 
     $priceResults = [];
 
+    // Process the main hotel data
     foreach ($hotels as $hotel) {
         $hotelPrices = [];
 
@@ -372,6 +378,84 @@ public function getRoomPrices(Request $request)
         ];
     }
 
+    // Process additional rows if any
+    $additionalRows = $request->input('additionalRows', []);
+    $additionalResults = [];
+
+    foreach ($additionalRows as $row) {
+        $location = $row['hotel_city'];
+        $dateRange = $row['date_range'];
+        $totalPerson = $request->input('totalperson'); // Assuming you use the main `totalperson` here
+        // You can process the additional row data just like the main data here
+
+        if (strpos($dateRange, ' - ') !== false) {
+            list($startDate, $endDate) = explode(' - ', $dateRange);
+        } elseif (strpos($dateRange, ' to ') !== false) {
+            list($startDate, $endDate) = explode(' to ', $dateRange);
+        }
+
+        $startDate = \Carbon\Carbon::parse($startDate);
+        $endDate = \Carbon\Carbon::parse($endDate);
+        $numDays = $startDate->diffInDays($endDate) + 1;
+
+        $hotels = Hotel::where('hotel_city', $location)->get();
+        // dd($hotels);
+        $priceResultsForRow = [];
+
+        foreach ($hotels as $hotel) {
+            $hotelPrices = [];
+
+            foreach ($roomTypes as $roomTypeName => $priceField) {
+                if (!is_null($hotel->$priceField)) {
+                    $numPersons = match (strtolower($roomTypeName)) {
+                        'quad' => 4,
+                        'triple' => 3,
+                        'double' => 2,
+                        'sharing' => 6,
+                        'quint' => 5,
+                        default => 1,
+                    };
+
+                    $basePrices = json_decode($hotel->$priceField, true); // Parse JSON prices
+                    $totalPrice = 0;
+
+                    // Get daily prices within the date range
+                    for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+                        $day = $date->day; // Get the day of the month (e.g., 21)
+                        $totalPrice += $basePrices[1][$day] ?? 0; // Use 0 if no price is set for that day
+                    }
+
+                    // Calculate room price per person and total
+                    $roomPricePerPerson = ($totalPrice / $numPersons) * $totalPerson;
+                    $hotelPrices[] = [
+                        'room_type' => ucfirst($roomTypeName),
+                        'price_per_person' => number_format($roomPricePerPerson, 2),
+                        'price_per_day' => number_format($roomPricePerPerson / $numDays, 2),
+                        'total_price_for_persons' => number_format($roomPricePerPerson, 2),
+                    ];
+                }
+            }
+
+            $priceResultsForRow[] = [
+                'id' => $hotel->id,
+                'hotel_name' => $hotel->hotel_name,
+                'hotel_city' => $hotel->hotel_city,
+                'package_name' => $hotel->package_name,
+                'hotel_stars' => $hotel->hotel_star,
+                'hotel_distance' => $hotel->hotel_distance,
+                'picture' => asset('images/' . $hotel->hotel_picture),
+                'prices' => $hotelPrices
+            ];
+        }
+
+        $additionalResults[] = [
+            'location' => $location,
+            'date_range' => $dateRange,
+            'num_days' => $numDays,
+            'prices' => $priceResultsForRow
+        ];
+    }
+
     return response()->json([
         'success' => true,
         'hotel_location' => $location,
@@ -379,9 +463,11 @@ public function getRoomPrices(Request $request)
         'num_days' => $numDays,
         'visa_price' => $visaPrice,
         'visa_price_with_transport' => $visaPriceWithTransport,
-        'prices' => $priceResults
+        'prices' => $priceResults,
+        'additional_rows' => $additionalResults // Add the additional rows data here
     ]);
 }
+
 
 
 
