@@ -515,6 +515,8 @@ padding: 1.1em 2.7em;
 
 
             let prices = response.prices;
+            // console.log("pr" , prices);
+
             let groupedHotels = {};
 
             // Process main response prices
@@ -537,11 +539,8 @@ padding: 1.1em 2.7em;
             }
 
 
-            // Process additional rows
             if (response.additional_rows && response.additional_rows.length > 0) {
-                // console.log('Processing Additional Rows...');
                 response.additional_rows.forEach((row, index) => {
-                    // console.log(`Additional Row ${index + 1}:`, row);
 
                     // Extract prices from additional row
                     if (row.prices && row.prices.length > 0) {
@@ -563,13 +562,14 @@ padding: 1.1em 2.7em;
             }
 
             if (response.prices) {
-    displayHotelPrices(response.prices, response.num_days || 1);
+
+    displayHotelPrices(response.prices, );
 }
 
 if (response.additional_rows && response.additional_rows.length > 0) {
     response.additional_rows.forEach((row, index) => {
         if (row.prices && row.prices.length > 0) {
-            displayHotelPrices(row.prices, response.num_days || 1);
+            displayHotelPrices(row.prices, row.num_days );
         }
     });
 }
@@ -628,6 +628,9 @@ function addHotelsToSection(hotels, location, packageName, dateRange, numDays) {
         let hotelStars = hotel.hotel_stars || 'N/A';
         let hotelPicture = hotel.picture || '';
         let hoteldistance = hotel.hotel_distance || 'N/A';
+        let numDays = hotel.number_days;
+        
+
 
         let hotelDetailsHtml = `
             <div class="card booking-card">

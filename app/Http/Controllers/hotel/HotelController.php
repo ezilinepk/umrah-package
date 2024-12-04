@@ -364,7 +364,7 @@ public function getRoomPrices(Request $request)
                 // Get daily prices within the date range
                 for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
                     $day = $date->day; // Get the day of the month (e.g., 21)
-                    $totalPrice += $basePrices[1][$day] ?? 0; // Use 0 if no price is set for that day
+                    $totalPrice += $basePrices[1][$day] ?? 0;
                 }
 
                 // Calculate room price per person and total
@@ -384,6 +384,7 @@ public function getRoomPrices(Request $request)
             'hotel_city' => $hotel->hotel_city,
             'package_name' => $hotel->package_name,
             'hotel_stars' => $hotel->hotel_star,
+            'number_days' =>  $numDays,
             'hotel_distance' => $hotel->hotel_distance,
             'picture' => asset('images/' . $hotel->hotel_picture),
             'prices' => $hotelPrices
@@ -454,6 +455,7 @@ public function getRoomPrices(Request $request)
                 'hotel_city' => $hotel->hotel_city,
                 'package_name' => $hotel->package_name,
                 'hotel_stars' => $hotel->hotel_star,
+                'number_days' => $numDays,
                 'hotel_distance' => $hotel->hotel_distance,
                 'picture' => asset('images/' . $hotel->hotel_picture),
                 'prices' => $hotelPrices
@@ -463,7 +465,6 @@ public function getRoomPrices(Request $request)
         $additionalResults[] = [
             'location' => $location,
             'date_range' => $dateRange,
-            'num_days' => $numDays,
             'prices' => $priceResultsForRow
         ];
     }
@@ -472,7 +473,6 @@ public function getRoomPrices(Request $request)
         'success' => true,
         'hotel_location' => $location,
         'date_range' => $dateRange,
-        'num_days' => $numDays,
         'visa_price' => $visaPrice,
         'visa_price_with_transport' => $visaPriceWithTransport,
         'prices' => $priceResults,
