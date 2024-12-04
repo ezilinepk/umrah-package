@@ -511,7 +511,7 @@ padding: 1.1em 2.7em;
     },
     success: function(response) {
         if (response.success) {
-            console.log(response);
+            console.log( 'main' , response);
 
 
             let prices = response.prices;
@@ -539,9 +539,9 @@ padding: 1.1em 2.7em;
 
             // Process additional rows
             if (response.additional_rows && response.additional_rows.length > 0) {
-                console.log('Processing Additional Rows...');
+                // console.log('Processing Additional Rows...');
                 response.additional_rows.forEach((row, index) => {
-                    console.log(`Additional Row ${index + 1}:`, row);
+                    // console.log(`Additional Row ${index + 1}:`, row);
 
                     // Extract prices from additional row
                     if (row.prices && row.prices.length > 0) {
@@ -630,7 +630,7 @@ function addHotelsToSection(hotels, location, packageName, dateRange, numDays) {
         let hoteldistance = hotel.hotel_distance || 'N/A';
 
         let hotelDetailsHtml = `
-            <div class="booking-card">
+            <div class="card booking-card">
                 <div class="row no-gutters">
                     <div class="col-md-3">
                         <img src="${hotelPicture}" class="card-img-top img-fluid" alt="${hotelName}" style="width: 257px; height: 257px;">
@@ -671,29 +671,23 @@ function addHotelsToSection(hotels, location, packageName, dateRange, numDays) {
 let totalPricesByLocation = { makkah: [], madina: [] };
 let responseBatch = [];
 
-function displayHotelPrices(responseData, numDays = 1) {
+function displayHotelPrices(responseData) {
     console.log('Received data:', responseData);
-    console.log('Number of nights:', numDays);
 
     responseBatch.push(responseData);
 
     if (responseBatch.length === 1) {
-        processLocationData(responseData, numDays, 'makkah');
+        processLocationData(responseData, 'makkah');
     } else if (responseBatch.length === 2) {
-        processLocationData(responseData, numDays, 'madina');
-        console.log('Makkah Hotels:', totalPricesByLocation.makkah);
-        console.log('Madina Hotels:', totalPricesByLocation.madina);
-
-        combineMakkahAndMadinaPrices();
-        console.log('Combined Hotels:', totalPricesByLocation.combined);
-
+        processLocationData(responseData, 'madina');
+        combineFirstTwoHotels();
         updatePriceTable();
         responseBatch = [];
     }
 }
 
-function processLocationData(responseData, numDays, location) {
-    console.log(`Processing data for ${location}...`);
+function processLocationData(responseData, location) {
+    // console.log(`Processing data for ${location}...`);
     let processedCount = 0;
 
     if (Array.isArray(responseData)) {
@@ -708,7 +702,7 @@ function processLocationData(responseData, numDays, location) {
             if (hotel.prices) {
                 hotel.prices.forEach(priceData => {
                     const roomType = priceData.room_type;
-                    const price = parseFloat(priceData.total_price_for_persons || 0) * numDays;
+                    const price = parseFloat(priceData.total_price_for_persons || 0);
                     hotelData.prices[roomType] = (hotelData.prices[roomType] || 0) + price;
                 });
             }
@@ -721,73 +715,113 @@ function processLocationData(responseData, numDays, location) {
         });
     }
 
-    console.log(`Processed ${processedCount} hotels for ${location}`);
+    // console.log(`Processed ${processedCount} hotels for ${location}`);
 }
 
-function combineMakkahAndMadinaPrices() {
+function combineFirstTwoHotels() {
     const combinedHotels = [];
     const roomTypes = ['Double', 'Triple', 'Quad', 'Quint', 'Sharing'];
 
-    // Iterate through Makkah hotels and find matching Madina hotels by package
-    totalPricesByLocation.makkah.forEach(makkahHotel => {
-        let matchedMadinaHotel = null;
+    const matchingHotels = {
+        makkah: [],
+        madina: []
+    };
 
-        // Find a Madina hotel with the same package name
-        for (const madinaHotel of totalPricesByLocation.madina) {
-            if (madinaHotel.package_name === makkahHotel.package_name) {
-                matchedMadinaHotel = madinaHotel;
-                break;
+    // Find matching hotels
+    totalPricesByLocation.makkah.forEach((makkahHotel) => {
+        totalPricesByLocation.madina.forEach((madinaHotel) => {
+            if (makkahHotel.package_name === madinaHotel.package_name) {
+                if (!matchingHotels.makkah.includes(makkahHotel)) {
+                    matchingHotels.makkah.push(makkahHotel);
+                }
+
+                if (!matchingHotels.madina.includes(madinaHotel)) {
+                    matchingHotels.madina.push(madinaHotel);
+                }
             }
-        }
+        });
+    });
 
-        // Combine prices if a matching Madina hotel is found
+    console.log("Matching Hotels for Makkah:", matchingHotels.makkah);
+    console.log("Matching Hotels for Madina:", matchingHotels.madina);
+
+    // Find unmatched hotels
+    const unmatchedMakkahHotels = totalPricesByLocation.makkah.filter(
+        makkahHotel => !matchingHotels.makkah.includes(makkahHotel)
+    );
+
+    const unmatchedMadinaHotels = totalPricesByLocation.madina.filter(
+        madinaHotel => !matchingHotels.madina.includes(madinaHotel)
+    );
+
+    console.log("Unmatched Hotels for Makkah:", unmatchedMakkahHotels);
+    console.log("Unmatched Hotels for Madina:", unmatchedMadinaHotels);
+
+    // Process unmatched hotels
+    unmatchedMakkahHotels.forEach(hotel => {
+        combinedHotels.push({
+            hotel_name: hotel.hotel_name,
+            package_name: hotel.package_name,
+            prices: hotel.prices
+        });
+    });
+
+    unmatchedMadinaHotels.forEach(hotel => {
+        combinedHotels.push({
+            hotel_name: hotel.hotel_name,
+            package_name: hotel.package_name,
+            prices: hotel.prices
+        });
+    });
+
+    // Combine matching hotels
+    const totalPairs = Math.min(matchingHotels.makkah.length, matchingHotels.madina.length);
+    for (let i = 0; i < totalPairs; i++) {
+        const makkahHotel = matchingHotels.makkah[i];
+        const madinaHotel = matchingHotels.madina[i];
+
         const combinedHotel = {
-            hotel_name: makkahHotel.hotel_name,
+            hotel_name: `${makkahHotel.hotel_name} & ${madinaHotel.hotel_name}`,
             package_name: makkahHotel.package_name,
             prices: {}
         };
 
-        if (matchedMadinaHotel) {
-            combinedHotel.hotel_name += ` & ${matchedMadinaHotel.hotel_name}`;
-        }
-
-        // Combine room prices
-        roomTypes.forEach(roomType => {
-            const makkahPrice = makkahHotel.prices[roomType] || 0;
-            const madinaPrice = matchedMadinaHotel?.prices[roomType] || 0;
-            combinedHotel.prices[roomType] = makkahPrice + madinaPrice;
+        // Sum the prices for each room type
+        roomTypes.forEach((roomType) => {
+            combinedHotel.prices[roomType] =
+                (makkahHotel.prices[roomType] || 0) + (madinaHotel.prices[roomType] || 0);
         });
 
         combinedHotels.push(combinedHotel);
-    });
-
- 
+    }
 
     totalPricesByLocation.combined = combinedHotels;
+
+    console.log("Combined Hotels:", combinedHotels);
 }
 
 
-
-
-
-
 function updatePriceTable() {
-    const tableContainer = $('#hotelPricesContainer .tablecontainer');
     const roomTypes = ['Double', 'Triple', 'Quad', 'Quint', 'Sharing'];
 
+    // Loop through each hotel in the combined list
     if (totalPricesByLocation.combined) {
-        totalPricesByLocation.combined.forEach(hotel => {
+        totalPricesByLocation.combined.forEach((hotel, index) => {
             const packageName = hotel.package_name || "Unspecified Package";
             const priceContainer = $(`#hotelPricesContainer-${packageName}`);
 
             if (priceContainer.length) {
-                console.log(`Appending table to: #hotelPricesContainer-${packageName}`);
+                // Track the number of tables appended for this specific package
+                let tablesInPackage = priceContainer.find('table').length;
 
-                // Create a new table for each hotel
+                // Determine the margin-top based on the number of tables already in this package
+                const marginTopValue = tablesInPackage === 0 ? '80px' : '170px';
+
+                // Create a new table
                 const table = $('<table></table>')
                     .addClass('table table-bordered')
                     .css({
-                        'margin-top': '70px',
+                        'margin-top': marginTopValue, // Apply margin-top dynamically
                         'box-shadow': '0 4px 6px rgba(0, 0, 0, 0.1)',
                         'border-radius': '8px',
                         'overflow': 'hidden'
@@ -798,7 +832,7 @@ function updatePriceTable() {
                     .appendTo(table);
                 const tableBody = $('<tbody></tbody>').appendTo(table);
 
-                // Add header row
+                // Add header row with room types
                 const headerRow = $('<tr></tr>');
                 roomTypes.forEach(roomType => {
                     headerRow.append(`<th>${roomType}</th>`);
@@ -806,7 +840,7 @@ function updatePriceTable() {
                 headerRow.append('<th>Total Price</th>');
                 tableHeader.append(headerRow);
 
-                // Add hotel data to the table
+                // Add price row and calculate total price
                 const totalRow = $('<tr></tr>');
                 let totalPrice = 0;
 
@@ -819,8 +853,8 @@ function updatePriceTable() {
                 totalRow.append(`<td>SAR ${totalPrice.toFixed(2)}</td>`);
                 tableBody.append(totalRow);
 
-                // priceContainer.empty(); // Optional: clear previous content
-                priceContainer.append(table); // Append the new table
+                // Append the table to the container
+                priceContainer.append(table);
             } else {
                 console.warn(`No container found for package: ${packageName}`);
             }

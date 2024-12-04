@@ -152,15 +152,7 @@
                                 </div>
                             </div>
 
-                            <div class="card room-prices">
-                                <div class="card-header">
-                                    <h4>Room Prices</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="hotel_price_table"></div>
-                                </div>
-                            </div>
-                        </div>
+
 
 
                         <div class="col-md-4">
@@ -184,35 +176,7 @@
                                 </div>
                             </div>
 
-                            <div class="card complements">
-                                <div class="card-header">
-                                    <h4>Complements</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <h5>Breakfast</h5>
-                                        <label><input type="checkbox"> Marmalade</label><br>
-                                        <label><input type="checkbox"> Ham</label><br>
-                                        <label><input type="checkbox"> Bread</label><br>
-                                        <label><input type="checkbox"> Breakfast burrito</label><br>
-                                        <label><input type="checkbox"> Coffee</label><br>
-                                        <label><input type="checkbox"> Tomato</label><br>
-                                    </div>
-                                    <div>
-                                        <h5>Dinner</h5>
-                                        <label><input type="checkbox"> Rice</label><br>
-                                        <label><input type="checkbox"> Beef</label><br>
-                                        <label><input type="checkbox"> Mutton</label><br>
-                                        <label><input type="checkbox"> Chicken</label><br>
-                                        <label><input type="checkbox"> Vegetable</label><br>
-                                    </div>
-                                    <div>
-                                        <h5>Drinks</h5>
-                                        <label><input type="checkbox"> Soft Drinks</label><br>
-                                        <label><input type="checkbox"> Juices</label><br>
-                                    </div>
-                                </div>
-                            </div>
+                           
 
                         </div>
                     </div>

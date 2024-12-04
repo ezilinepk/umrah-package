@@ -68,6 +68,8 @@ class HotelController extends Controller
                     'addresses' => $request->address[$index] ?? '',
                 ];
 
+                // dd($hotelData);
+
                 $hotel = Hotel::create($hotelData);
 
                 if ($request->file('hotel_picture') && isset($request->file('hotel_picture')[$index])) {
@@ -106,8 +108,18 @@ class HotelController extends Controller
     public function edit($id)
     {
         $hotel = Hotel::findOrFail($id);
-        return view('hotel.edit', compact('hotel'));
+        $roomPriceSharing = json_decode($hotel->room_price_sharing, true);
+        // dd($roomPriceSharing);
+        $roomPriceQuad = json_decode($hotel->room_price_quad, true);
+        // dd($roomPriceQuad);
+        $roomPriceDouble = json_decode($hotel->room_price_double, true);
+        $roomPriceTriple = json_decode($hotel->room_price_triple, true);
+        $roomPriceQuint = json_decode($hotel->room_price_quint, true);
+        $packages = HotelPackage::all();
+
+        return view('hotel.edit', compact('hotel', 'packages', 'roomPriceSharing', 'roomPriceTriple' , 'roomPriceQuad', 'roomPriceDouble', 'roomPriceQuint'));
     }
+
 
 
 
@@ -546,34 +558,33 @@ public function getRoomPrices(Request $request)
             'hotel_google_map' => 'nullable|url',
             'hotel_star' => 'required|integer|min:1|max:5',
             'hotel_distance' => 'nullable|numeric',
-            'hotel_picture' => 'nullable|image|mimes:png,jpg,avif,jpeg,webp',
-            'room_price_sharing' => 'required|numeric',
-            'room_price_sharing_currency' => 'required|in:PKR,USD',
-            'room_price_quint' => 'required|numeric',
-            'room_price_quint_currency' => 'required|in:PKR,USD',
-            'room_price_triple' => 'required|numeric',
-            'room_price_triple_currency' => 'required|in:PKR,USD',
-            'room_price_double' => 'required|numeric',
-            'room_price_double_currency' => 'required|in:PKR,USD',
-            'room_price_quad' => 'required|numeric',
-            'room_price_quad_currency' => 'required|in:PKR,USD',
+            'hotel_picture' => 'nullable|image|mimes:png,jpg,avif,jpeg,webp|max:2048',
+            'room_price_sharing' => 'required|array',
+            'room_price_quint' => 'required|array',
+            'room_price_triple' => 'required|array',
+            'room_price_double' => 'required|array',
+            'room_price_quad' => 'required|array',
+            'package_name' => 'required|string',
             'hotel_room_details' => 'nullable|string',
             'hotel_details' => 'nullable|string',
             'hotel_images.*' => 'image|mimes:jpeg,png,jpg,webp,gif,avif,svg|max:2048',
         ]);
 
-        foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day) {
-            foreach (['sharing', 'quint', 'double', 'triple'] as $room_type) {
-                $validatedData = array_merge($validatedData, $request->validate([
-                    $day . '_price_' . $room_type => 'nullable|numeric',
-                    $day . '_price_' . $room_type . '_currency' => 'nullable|string|in:PKR,USD',
-                ]));
-            }
-        }
-
         $hotel = Hotel::findOrFail($id);
-        $hotel->update($validatedData);
 
+        // Prepare room prices as JSON-encoded fields
+        $roomPrices = [
+            'room_price_sharing' => json_encode($request->room_price_sharing),
+            'room_price_quint' => json_encode($request->room_price_quint),
+            'room_price_triple' => json_encode($request->room_price_triple),
+            'room_price_double' => json_encode($request->room_price_double),
+            'room_price_quad' => json_encode($request->room_price_quad),
+        ];
+
+        // Update the hotel with validated data and room prices
+        $hotel->update(array_merge($validatedData, $roomPrices));
+
+        // Handle hotel picture
         if ($request->hasFile('hotel_picture')) {
             if ($hotel->hotel_picture && file_exists(public_path('images/' . $hotel->hotel_picture))) {
                 unlink(public_path('images/' . $hotel->hotel_picture));
@@ -599,6 +610,7 @@ public function getRoomPrices(Request $request)
 
         return redirect()->route('hotel.index')->with('success', 'Hotel updated successfully.');
     }
+
 
 
 

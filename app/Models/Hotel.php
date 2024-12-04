@@ -37,6 +37,13 @@ class Hotel extends Model
 }
 
 
+public function packages()
+{
+    return $this->belongsToMany(HotelPackage::class, 'hotel_package_hotel', 'hotel_id', 'package_id');
+}
+
+
+
 
 
 }

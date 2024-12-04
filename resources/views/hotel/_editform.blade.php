@@ -1,3 +1,5 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <div class="form-group">
     <div class="row">
         <!-- Hotel Name -->
@@ -71,242 +73,647 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <div class="col-md-6">
-            <label class="form-label" for="room_price_sharing">Sharing Room Price <b class="text-danger">*</b></label>
-            <div class="input-group">
-                <input type="number" step="0.01" class="form-control @error('room_price_sharing') is-invalid state-invalid @enderror" name="room_price_sharing" id="room_price_sharing" placeholder="Enter Sharing Room Price..." value="{{ old('room_price_sharing', $hotel->room_price_sharing) }}" required>
+<div class="col-md-3">
+    <label class="form-label" for="address">Address <b class="text-danger">*</b></label>
+    <input type="text" class="form-control @error('address') is-invalid state-invalid @enderror" name="address[]" id="addresses" placeholder="Enter Address..." required value="{{ old('addresses', $hotel->addresses) }}">
+    <div id="validationServerHotelNameFeedback" class="invalid-feedback">This Field is Required.</div>
+    @error('address')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
+
+</div>
+
+
+
+<div class="row mb-12">
+    <div class="col-md-6">
+                <label class="form-label" for="room_price_quad">Quad Room Price <b class="text-danger">*</b></label>
+                <div class="input-group mb-2">
+                        <div style="margin-left: 20px">
+                            <input type="checkbox" class="form-check-input autofill-checkbox" data-target="room_price_quad" id="autofill_quad" name="autofill_quad" {{ old('autofill_quad', $hotel->autofill_quad) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="autofill_quad">Autofill</label>
+                        </div>
+                </div>
+                <div class="input-group">
+                    <label class="form-label"></label>
+                    <select class="form-select mb-3 month-selector" id="monthSelectorQuad" name="room_price_quad">
+                        <option value="" disabled>Select Month</option>
+                        @foreach(range(1, 12) as $month)
+                            <option value="{{ $month }}"
+                                {{ old('room_price_quad', $hotel->room_price_quad) == $month ? 'selected' : '' }}>
+                                {{ date("F", mktime(0, 0, 0, $month, 1)) }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                </div>
+                <div id="calendarDaysQuad"></div>
+                <div id="validationServerRoomPriceQuadFeedback" class="invalid-feedback">This Field is Required.</div>
+                @error('room_price_quad')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
-            <div id="validationServerRoomPriceSharingFeedback" class="invalid-feedback">This Field is Required.</div>
+
+            <div class="col-md-6">
+                <label class="form-label" for="room_price_double">Double Room Price <b class="text-danger">*</b></label>
+                <div class="input-group mb-2">
+                    <div style="margin-left: 20px">
+                    <input type="checkbox" class="form-check-input autofill-checkbox" data-target="room_price_double" id="autofill_double">
+                    <label class="form-check-label" for="autofill_double">Autofill</label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <select class="form-select mb-3 month-selector" id="monthSelectorDouble" name="room_price_double">
+                        <option value="" disabled>Select Month</option>
+                        @foreach(range(1, 12) as $month)
+                            <option value="{{ $month }}"
+                                {{ old('room_price_double', $hotel->room_price_double) == $month ? 'selected' : '' }}>
+                                {{ date("F", mktime(0, 0, 0, $month, 1)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div id="calendarDaysDouble"></div>
+                <div id="validationServerRoomPriceDoubleFeedback" class="invalid-feedback">This Field is Required.</div>
+                @error('room_price_double')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+    </div>
+
+
+
+    <div class="row mb-12">
+        <div class="col-md-6">
+            <label class="form-label" for="room_price_sharing">
+                Sharing Room Price <b class="text-danger">*</b>
+            </label>
+            <div class="input-group mb-2">
+                <div style="margin-left: 20px">
+                    <input type="checkbox" class="form-check-input autofill-checkbox" data-target="room_price_sharing" id="autofill_sharing">
+                    <label class="form-check-label" for="autofill_sharing">Autofill</label>
+                </div>
+            </div>
+            <div class="input-group">
+
+                <select class="form-select mb-3 month-selector" id="monthSelectorSharing" name="room_price_sharing">
+                    <option value="" disabled>Select Month</option>
+                    @foreach(range(1, 12) as $month)
+                        <option value="{{ $month }}"
+                            {{ old('room_price_sharing', $hotel->room_price_sharing) == $month ? 'selected' : '' }}>
+                            {{ date("F", mktime(0, 0, 0, $month, 1)) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div id="calendarDaysSharing"></div>
+            <div id="validationServerRoomPriceSharingFeedback" class="invalid-feedback">
+                This Field is Required.
+            </div>
             @error('room_price_sharing')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-    </div>
-</div>
 
 
-<div class="card">
-    <div class="card-header">
         <div class="col-md-6">
-            <label class="form-label" for="room_price_quint">Quint Room Price <b class="text-danger">*</b></label>
-            <div class="input-group">
-                <input type="number" step="0.01" class="form-control @error('room_price_quint') is-invalid state-invalid @enderror" name="room_price_quint" id="room_price_quint" placeholder="Enter Quint Room Price..." value="{{ old('room_price_quint', $hotel->room_price_quint) }}" required>
+            <label class="form-label" for="room_price_triple">
+                Triple Room Price <b class="text-danger">*</b>
+            </label>
+            <div class="input-group mb-2">
+                <div style="margin-left: 20px">
+                    <input type="checkbox" class="form-check-input autofill-checkbox" data-target="room_price_triple" id="autofill_triple">
+                    <label class="form-check-label" for="autofill_triple">Autofill</label>
+                </div>
             </div>
-            <div id="validationServerRoomPriceQuintFeedback" class="invalid-feedback">This Field is Required.</div>
-            @error('room_price_quint')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-
-</div>
-
-
-<div class="card">
-    <div class="card-header">
-        <div class="col-md-4">
-            <label class="form-label" for="room_price_triple">Triple Room Price <b class="text-danger">*</b></label>
             <div class="input-group">
-                <input type="number" step="0.01" class="form-control @error('room_price_triple') is-invalid state-invalid @enderror" name="room_price_triple" id="room_price_triple" placeholder="Enter Triple Room Price..."  value="{{ old('room_price_triple', $hotel->room_price_triple) }}" requiredrequired>
 
+                <select class="form-select mb-3 month-selector" id="monthSelectorTriple" name="room_price_triple">
+                    <option value="" disabled>Select Month</option>
+                    @foreach(range(1, 12) as $month)
+                        <option value="{{ $month }}"
+                            {{ old('room_price_triple', $hotel->room_price_triple) == $month ? 'selected' : '' }}>
+                            {{ date("F", mktime(0, 0, 0, $month, 1)) }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-            <div id="validationServerRoomPriceTripleFeedback" class="invalid-feedback">This Field is Required.</div>
+            <div id="validationServerRoomPriceTripleFeedback" class="invalid-feedback">
+                This Field is Required.
+            </div>
             @error('room_price_triple')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
+
+            <!-- Move this inside the col-md-6 -->
+            <div id="calendarDaysTriple" class="form-row mb-3"></div>
         </div>
     </div>
 
-</div>
 
-<div class="card">
-    <div class="card-header">
-        <div class="col-md-4">
-            <label class="form-label" for="room_price_quad">Quad Room Price <b class="text-danger">*</b></label>
-            <div class="input-group">
-                <input type="number" step="0.01" class="form-control @error('room_price_quad') is-invalid state-invalid @enderror" name="room_price_quad" id="room_price_quad" placeholder="Enter Quad Room Price..."  value="{{ old('room_price_quad', $hotel->room_price_quad) }}" required required>
+
+
+
+
+
+    <div class="col-md-6">
+        <label class="form-label" for="room_price_quint">
+            Quint Room Price <b class="text-danger">*</b>
+        </label>
+        <div class="input-group mb-2">
+            <div style="margin-left: 20px">
+            <input type="checkbox" class="form-check-input autofill-checkbox" data-target="room_price_quint" id="autofill_quint">
+            <label class="form-check-label ms-2" for="autofill_quint">Autofill</label>
             </div>
-            <div id="validationServerRoomPriceQuadFeedback" class="invalid-feedback">This Field is Required.</div>
-            @error('room_price_quad')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
         </div>
-    </div>
+        <div class="input-group">
 
-</div>
-
-
-
-<div class="card">
-    <div class="card-header">
-        <div class="col-md-6">
-            <label class="form-label" for="room_price_double">Double Room Price <b class="text-danger">*</b></label>
-            <div class="input-group">
-                <input type="number" step="0.01" class="form-control @error('room_price_double') is-invalid state-invalid @enderror" name="room_price_double" id="room_price_double" placeholder="Enter Double Room Price..." value="{{ old('room_price_double', $hotel->room_price_double) }}" required>
-        
-            </div>
-            <div id="validationServerRoomPriceDoubleFeedback" class="invalid-feedback">This Field is Required.</div>
-            @error('room_price_double')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <select class="form-select mb-3 month-selector" id="monthSelectorQuint" name="room_price_quint">
+                <option value="" disabled>Select Month</option>
+                @foreach(range(1, 12) as $month)
+                    <option value="{{ $month }}"
+                        {{ old('room_price_quint', $hotel->room_price_quint) == $month ? 'selected' : '' }}>
+                        {{ date("F", mktime(0, 0, 0, $month, 1)) }}
+                    </option>
+                @endforeach
+            </select>
         </div>
-    </div>
-
-</div>
-
-
-<div class="row" style="margin-left: 40px">
-    <div class="col-md-4">
-        <label class="form-label" for="hotel_room_detail">Hotel Room Detail <b class="text-danger">*</b></label>
-        <textarea class="form-control @error('hotel_room_detail') is-invalid state-invalid @enderror" name="hotel_room_details" id="hotel_room_detail" placeholder="Enter Hotel Room Detail..." required>{{ old('hotel_room_details', $hotel->hotel_room_details) }}</textarea>
-        <div id="validationServerHotelRoomDetailFeedback" class="invalid-feedback">This Field is Required.</div>
-        @error('hotel_room_detail')
+        <div id="calendarDaysquint"></div>
+        <div id="validationServerRoomPricequintFeedback" class="invalid-feedback">
+            This Field is Required.
+        </div>
+        @error('room_price_quint')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 
-    <div class="col-md-4">
-        <label class="form-label" for="hotel_details">Hotel Details <b class="text-danger">*</b></label>
-        <textarea class="form-control @error('hotel_details') is-invalid state-invalid @enderror" name="hotel_details" id="hotel_details" placeholder="Enter Hotel Details..." required>{{ old('hotel_details' , $hotel->hotel_details) }}</textarea>
-        <div id="validationServerHotelDetailsFeedback" class="invalid-feedback">This Field is Required.</div>
-        @error('hotel_details')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
+
+
+
+
+</div>
+
+<div class="form-row mb-3">
+
+
+    <div class="col-md-9">
+
+        <div id="calendarDays"></div>
+        <div class="calendar-input calendar-days"></div>
+
+        {{-- <button class="btn btn-sm btn-primary" id="addcalenderButton" type="button">
+            <i class="fa fa-plus"></i>
+        </button> --}}
+    </div>
+
+
+
+    <div class="form-group col-md-1 col-sm-6 col-12 d-flex align-items-end">
+        {{-- <button class="btn btn-sm btn-primary" id="addRowButton" type="button">
+            <i class="fa fa-plus"></i>
+        </button> --}}
     </div>
 </div>
 
+<div id="additionalRowsContainer"></div>
+<div id="additionalRowsCalender"></div>
 
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const roomPriceSharingInput = document.getElementById('room_price_sharing');
-        const dailyPriceInputs = {
-            monday: document.getElementById('monday_price_sharing'),
-            tuesday: document.getElementById('tuesday_price_sharing'),
-            wednesday: document.getElementById('wednesday_price_sharing'),
-            thursday: document.getElementById('thursday_price_sharing'),
-            friday: document.getElementById('friday_price_sharing'),
-            saturday: document.getElementById('saturday_price_sharing'),
-            sunday: document.getElementById('sunday_price_sharing'),
-        };
+$(document).ready(function() {
+    // Trigger the change event on page load for the pre-selected month
+    const selectedMonth = $('#monthSelectorQuad').val();
+    if (selectedMonth) {
+        $('#monthSelectorQuad').trigger('change');
+    }
+});
 
-        roomPriceSharingInput.addEventListener('input', function() {
-            const sharingPrice = parseFloat(roomPriceSharingInput.value) || 0;
+$('#monthSelectorQuad').on('change', function() {
+    var roomPriceQuadData = @json($roomPriceQuad);
+    console.log("Room Price Data:", roomPriceQuadData); // Check the entire data structure
 
-            for (const day in dailyPriceInputs) {
-                dailyPriceInputs[day].value = sharingPrice.toFixed(2);
-            }
+    const month = parseInt(this.value) - 1; // Adjust for 0-based month indexing (January is 0, December is 11)
+    console.log("Selected Month:", month); // Debugging
+
+    const year = new Date().getFullYear();
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get number of days in the month
+    let daysHTML = '';
+    const monthData = roomPriceQuadData[month + 1] || {}; // Get data for the selected month
+
+    console.log("Month Data:", monthData); // Debugging: Check if we got the correct data for the selected month
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day); // 0-based month
+        const weekday = date.toLocaleString('default', { weekday: 'long' });
+        const price = monthData[day] || ''; // Get price for the day, default to empty if not available
+
+        daysHTML += `
+            <div class="col-md-2 mb-2">
+                <label for="room_price_quad[${month + 1}][${day}]">${weekday} - ${day}</label>
+                <input type="text" class="form-control day-input-quad" name="room_price_quad[${month + 1}][${day}]"
+                    id="room_price_quad[${month + 1}][${day}]" placeholder="Enter price for ${weekday}"
+                    value="${price}">
+            </div>
+        `;
+    }
+
+    console.log("Generated Days HTML:", daysHTML);
+    $('#calendarDaysQuad').html(`<div class="row">${daysHTML}</div>`);
+});
+
+$(document).ready(function() {
+    const selectedMonth = $('#monthSelectorDouble').val();
+if (selectedMonth && selectedMonth != "0") {
+    $('#monthSelectorDouble').trigger('change');
+} else {
+    console.error("Invalid or no month selected");
+}
+
+});
+
+$('#monthSelectorDouble').on('change', function() {
+    var roomPriceDouble = @json($roomPriceDouble);
+    console.log("Room Price Data:", roomPriceDouble); // Check the entire data structure
+
+    const month = parseInt(this.value) - 1; // Adjust for 0-based month indexing (January is 0, December is 11)
+    console.log("Selected Month:", month); // Debugging
+
+    const year = new Date().getFullYear();
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get number of days in the month
+    let daysHTML = '';
+    const monthData = roomPriceDouble[month + 1] || {}; // Get data for the selected month
+
+    console.log("Month Data:", monthData); // Debugging: Check if we got the correct data for the selected month
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day); // 0-based month
+        const weekday = date.toLocaleString('default', { weekday: 'long' });
+        const price = monthData[day] || ''; // Get price for the day, default to empty if not available
+
+        daysHTML += `
+            <div class="col-md-2 mb-2">
+                <label for="room_price_double[${month + 1}][${day}]">${weekday} - ${day}</label>
+                <input type="text" class="form-control day-input-quad" name="room_price_double[${month + 1}][${day}]"
+                    id="room_price_double[${month + 1}][${day}]" placeholder="Enter price for ${weekday}"
+                    value="${price}">
+            </div>
+        `;
+    }
+
+    console.log("Generated Days HTML:", daysHTML);
+$('#calendarDaysDouble').html(`<div class="row">${daysHTML}</div>`);
+
+});
+
+
+$(document).ready(function() {
+    // Trigger the change event on page load for the pre-selected month
+    const selectedMonth = $('#monthSelectorSharing').val();
+    if (selectedMonth) {
+        $('#monthSelectorSharing').trigger('change');
+    }
+});
+
+$('#monthSelectorSharing').on('change', function() {
+    var roomPriceQuadData = @json($roomPriceQuad);
+    console.log("Room Price Data:", roomPriceQuadData); // Check the entire data structure
+
+    const month = parseInt(this.value) - 1; // Adjust for 0-based month indexing (January is 0, December is 11)
+    console.log("Selected Month:", month); // Debugging
+
+    const year = new Date().getFullYear();
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get number of days in the month
+    let daysHTML = '';
+    const monthData = roomPriceQuadData[month + 1] || {}; // Get data for the selected month
+
+    console.log("Month Data:", monthData); // Debugging: Check if we got the correct data for the selected month
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day); // 0-based month
+        const weekday = date.toLocaleString('default', { weekday: 'long' });
+        const price = monthData[day] || ''; // Get price for the day, default to empty if not available
+
+        daysHTML += `
+            <div class="col-md-2 mb-2">
+                <label for="room_price_sharing[${month + 1}][${day}]">${weekday} - ${day}</label>
+                <input type="text" class="form-control day-input-quad" name="room_price_sharing[${month + 1}][${day}]"
+                    id="room_price_sharing[${month + 1}][${day}]" placeholder="Enter price for ${weekday}"
+                    value="${price}">
+            </div>
+        `;
+    }
+
+    console.log("Generated Days HTML:", daysHTML);
+    $('#calendarDaysSharing').html(`<div class="row">${daysHTML}</div>`);
+});
+
+
+
+
+
+
+
+$(document).ready(function() {
+    // Trigger the change event on page load for the pre-selected month
+    const selectedMonth = $('#monthSelectorTriple').val();
+    if (selectedMonth) {
+        $('#monthSelectorTriple').trigger('change');
+    }
+});
+
+$('#monthSelectorTriple').on('change', function() {
+    var roomPriceTripleData = @json($roomPriceTriple);
+    console.log("Room Price Data:", roomPriceTripleData); // Check the entire data structure
+
+    const month = parseInt(this.value) - 1; // Adjust for 0-based month indexing (January is 0, December is 11)
+    console.log("Selected Month:", month); // Debugging
+
+    const year = new Date().getFullYear();
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get number of days in the month
+    let daysHTML = '';
+    const monthData = roomPriceTripleData[month + 1] || {}; // Get data for the selected month
+
+    console.log("Month Data:", monthData); // Debugging: Check if we got the correct data for the selected month
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day); // 0-based month
+        const weekday = date.toLocaleString('default', { weekday: 'long' });
+        const price = monthData[day] || ''; // Get price for the day, default to empty if not available
+
+        daysHTML += `
+            <div class="col-md-2 mb-2">
+                <label for="room_price_triple[${month + 1}][${day}]">${weekday} - ${day}</label>
+                <input type="text" class="form-control day-input-quad" name="room_price_triple[${month + 1}][${day}]"
+                    id="room_price_triple[${month + 1}][${day}]" placeholder="Enter price for ${weekday}"
+                    value="${price}">
+            </div>
+        `;
+    }
+
+    console.log("Generated Days HTML:", daysHTML);
+    $('#calendarDaysTriple').html(`<div class="row">${daysHTML}</div>`);
+});
+
+
+
+
+
+$(document).ready(function() {
+    // Trigger the change event on page load for the pre-selected month
+    const selectedMonth = $('#monthSelectorQuint').val();
+    if (selectedMonth) {
+        $('#monthSelectorQuint').trigger('change');
+    }
+});
+
+$('#monthSelectorQuint').on('change', function() {
+    var roomPriceQuintData = @json($roomPriceQuint);
+    console.log("Room Price Data:", roomPriceQuintData); // Check the entire data structure
+
+    const month = parseInt(this.value) - 1; // Adjust for 0-based month indexing (January is 0, December is 11)
+    console.log("Selected Month:", month); // Debugging
+
+    const year = new Date().getFullYear();
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get number of days in the month
+    let daysHTML = '';
+    const monthData = roomPriceQuintData[month + 1] || {}; // Get data for the selected month
+
+    console.log("Month Data:", monthData); // Debugging: Check if we got the correct data for the selected month
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day); // 0-based month
+        const weekday = date.toLocaleString('default', { weekday: 'long' });
+        const price = monthData[day] || ''; // Get price for the day, default to empty if not available
+
+        daysHTML += `
+            <div class="col-md-2 mb-2">
+                <label for="room_price_quint[${month + 1}][${day}]">${weekday} - ${day}</label>
+                <input type="text" class="form-control day-input-quad" name="room_price_quint[${month + 1}][${day}]"
+                    id="room_price_quint[${month + 1}][${day}]" placeholder="Enter price for ${weekday}"
+                    value="${price}">
+            </div>
+        `;
+    }
+
+    console.log("Generated Days HTML:", daysHTML);
+    $('#calendarDaysQuint').html(`<div class="row">${daysHTML}</div>`);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$(document).ready(function() {
+
+
+
+    // Check if #room_price_sharing and #calendarDaysSharing elements exist
+    if ($('#room_price_sharing').length === 0 || $('#calendarDaysSharing').length === 0) {
+        console.error('Required elements not found in the DOM.');
+        return;
+    }
+
+    // Handle month selection and generate calendar days
+    $('#room_price_sharing').on('change', function() {
+        const month = this.value;
+        if (!month) {
+            console.error('Invalid month value selected.');
+            return;
+        }
+
+        const year = new Date().getFullYear();
+        const daysInMonth = new Date(year, month, 0).getDate();
+        let daysHTML = '';
+
+        // Loop through the days of the month and get the prices for each day
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month - 1, day);
+            const weekday = date.toLocaleString('default', { weekday: 'long' });
+
+            // Fetch the price for the current day, if available
+            const price = $roomPriceSharing && $roomPriceSharing[month] ? $roomPriceSharing[month][day] : '';
+
+            // Append the input fields for each day
+            daysHTML += `
+                <div class="col-md-2 mb-2">
+                    <label for="room_price_sharing[${month}][${day}]">${weekday} - ${day}</label>
+                    <input type="text" class="form-control day-input" name="room_price_sharing[${month}][${day}]"
+                        id="room_price_sharing[${month}][${day}]" placeholder="Enter price for ${weekday}"
+                        value="${price}">
+                </div>
+            `;
+        }
+
+        // Ensure the calendar container is updated
+        $('#calendarDaysSharing').html(`<div class="row day-inputs">${daysHTML}</div>`);
+    });
+});
+
+
+
+$('#autofill_sharing').on('change', function() {
+    const dayInputs = $('.day-input');
+    if (this.checked) {
+        const firstDayValue = dayInputs.first().val();
+        dayInputs.each(function() {
+            $(this).val(firstDayValue);
         });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-    const roomPriceQuadInput = document.getElementById('room_price_quad');
-    const weeklyPriceInputs = {
-        monday: document.getElementById('monday_price_quad'),
-        tuesday: document.getElementById('tuesday_price_quad'),
-        wednesday: document.getElementById('wednesday_price_quad'),
-        thursday: document.getElementById('thursday_price_quad'),
-        friday: document.getElementById('friday_price_quad'),
-        saturday: document.getElementById('saturday_price_quad'),
-        sunday: document.getElementById('sunday_price_quad'),
-    };
-
-    roomPriceQuadInput.addEventListener('input', function() {
-        const quadPrice = parseFloat(roomPriceQuadInput.value) || 0;
-
-        for (const day in weeklyPriceInputs) {
-            weeklyPriceInputs[day].value = quadPrice.toFixed(2);
-        }
-    });
+    } else {
+        dayInputs.each(function() {
+            $(this).val('');
+        });
+    }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const roomPriceQuadInput = document.getElementById('room_price_double');
-    const weeklyPriceInputs = {
-        monday: document.getElementById('monday_price_double'),
-        tuesday: document.getElementById('tuesday_price_double'),
-        wednesday: document.getElementById('wednesday_price_double'),
-        thursday: document.getElementById('thursday_price_double'),
-        friday: document.getElementById('friday_price_double'),
-        saturday: document.getElementById('saturday_price_double'),
-        sunday: document.getElementById('sunday_price_double'),
-    };
 
-    roomPriceQuadInput.addEventListener('input', function() {
-        const quadPrice = parseFloat(roomPriceQuadInput.value) || 0;
 
-        for (const day in weeklyPriceInputs) {
-            weeklyPriceInputs[day].value = quadPrice.toFixed(2);
-        }
-    });
+$('#autofill_sharing').on('change', function() {
+const dayInputs = $('.day-input');
+if (this.checked) {
+const firstDayValue = dayInputs.first().val();
+dayInputs.each(function() {
+    $(this).val(firstDayValue);
+});
+} else {
+dayInputs.each(function() {
+    $(this).val('');
+});
+}
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const roomPriceQuadInput = document.getElementById('room_price_quint');
-    const weeklyPriceInputs = {
-        monday: document.getElementById('monday_price_quint'),
-        tuesday: document.getElementById('tuesday_price_quint'),
-        wednesday: document.getElementById('wednesday_price_quint'),
-        thursday: document.getElementById('thursday_price_quint'),
-        friday: document.getElementById('friday_price_quint'),
-        saturday: document.getElementById('saturday_price_quint'),
-        sunday: document.getElementById('sunday_price_quint'),
-    };
+$('#room_price_triple').on('change', function() {
+const month = this.value;
+const year = new Date().getFullYear();
+const daysInMonth = new Date(year, month, 0).getDate();
+let daysHTML = '';
 
-    roomPriceQuadInput.addEventListener('input', function() {
-        const quadPrice = parseFloat(roomPriceQuadInput.value) || 0;
+for (let day = 1; day <= daysInMonth; day++) {
+const date = new Date(year, month - 1, day);
+const weekday = date.toLocaleString('default', { weekday: 'long' });
 
-        for (const day in weeklyPriceInputs) {
-            weeklyPriceInputs[day].value = quadPrice.toFixed(2);
-        }
-    });
+daysHTML += `
+    <div class="col-md-2 mb-2">
+        <label for="room_price_triple[${month}][${day}]">${weekday} - ${day}</label>
+        <input type="text" class="form-control day-input-triple" name="room_price_triple[${month}][${day}]"
+               id="room_price_triple[${month}][${day}]" placeholder="Enter price for ${weekday}">
+    </div>
+`;
+}
+
+$('#calendarDaysTriple').html(`<div class="row day-inputs">${daysHTML}</div>`);
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const roomPriceQuadInput = document.getElementById('room_price_triple');
-    const weeklyPriceInputs = {
-        monday: document.getElementById('monday_price_triple'),
-        tuesday: document.getElementById('tuesday_price_triple'),
-        wednesday: document.getElementById('wednesday_price_triple'),
-        thursday: document.getElementById('thursday_price_triple'),
-        friday: document.getElementById('friday_price_triple'),
-        saturday: document.getElementById('saturday_price_triple'),
-        sunday: document.getElementById('sunday_price_triple'),
-    };
-
-    roomPriceQuadInput.addEventListener('input', function() {
-        const quadPrice = parseFloat(roomPriceQuadInput.value) || 0;
-
-        for (const day in weeklyPriceInputs) {
-            weeklyPriceInputs[day].value = quadPrice.toFixed(2);
-        }
-    });
+$('#autofill_triple').on('change', function() {
+const dayInputsTriple = $('.day-input-triple');
+if (this.checked) {
+const firstDayValue = dayInputsTriple.first().val();
+dayInputsTriple.each(function() {
+    $(this).val(firstDayValue);
+});
+} else {
+dayInputsTriple.each(function() {
+    $(this).val('');
+});
+}
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const roomPriceQuadInput = document.getElementById('room_price_double');
-    const weeklyPriceInputs = {
-        monday: document.getElementById('monday_price_double'),
-        tuesday: document.getElementById('tuesday_price_double'),
-        wednesday: document.getElementById('wednesday_price_double'),
-        thursday: document.getElementById('thursday_price_double'),
-        friday: document.getElementById('friday_price_double'),
-        saturday: document.getElementById('saturday_price_double'),
-        sunday: document.getElementById('sunday_price_double'),
-    };
 
-    roomPriceQuadInput.addEventListener('input', function() {
-        const quadPrice = parseFloat(roomPriceQuadInput.value) || 0;
 
-        for (const day in weeklyPriceInputs) {
-            weeklyPriceInputs[day].value = quadPrice.toFixed(2);
-        }
-    });
+
+
+    $('#autofill_quad').on('change', function() {
+const dayInputsTriple = $('.day-input-quad');
+if (this.checked) {
+const firstDayValue = dayInputsTriple.first().val();
+dayInputsTriple.each(function() {
+    $(this).val(firstDayValue);
 });
+} else {
+dayInputsTriple.each(function() {
+    $(this).val('');
+});
+}
+});
+
+$('#autofill_double').on('change', function() {
+const dayInputsTriple = $('.day-input-double');
+if (this.checked) {
+const firstDayValue = dayInputsTriple.first().val();
+dayInputsTriple.each(function() {
+    $(this).val(firstDayValue);
+});
+} else {
+dayInputsTriple.each(function() {
+    $(this).val('');
+});
+}
+});
+;
+
+$('#monthSelectorquint').on('change', function() {
+    const month = this.value;
+    const year = new Date().getFullYear();
+    const daysInMonth = new Date(year, month, 0).getDate();
+    let daysHTML = '';
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month - 1, day);
+        const weekday = date.toLocaleString('default', { weekday: 'long' });
+
+        daysHTML += `
+            <div class="col-md-2 mb-2">
+                <label for="room_price_quint[${month}][${day}]">${weekday} - ${day}</label>
+                <input type="text" class="form-control day-input-quint" name="room_price_quint[${month}][${day}]"
+                    id="room_price_quint[${month}][${day}]" placeholder="Enter price for ${weekday}">
+            </div>
+        `;
+    }
+
+    $('#calendarDaysquint').html(`<div class="row day-inputs">${daysHTML}</div>`);
+});
+
+$('#autofill_quint').on('change', function() {
+    const dayInputsQuint = $('.day-input-quint');
+    if (this.checked) {
+        const firstDayValue = dayInputsQuint.first().val();
+        dayInputsQuint.each(function() {
+            $(this).val(firstDayValue);
+        });
+    } else {
+        dayInputsQuint.each(function() {
+            $(this).val('');
+        });
+    }
+});
+
+
+
 
 
 </script>
